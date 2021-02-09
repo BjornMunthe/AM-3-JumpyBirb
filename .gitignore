@@ -20,6 +20,10 @@ hs_err_pid*
 # Created by https://www.toptal.com/developers/gitignore/api/maven
 # Edit at https://www.toptal.com/developers/gitignore?templates=maven
 
+### Intellij ###
+.idea
+jumpy-birb.iml
+
 ### Maven ###
 target/
 pom.xml.tag
