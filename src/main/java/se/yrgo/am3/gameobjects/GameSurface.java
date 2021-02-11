@@ -1,8 +1,6 @@
 package se.yrgo.am3.gameobjects;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -20,12 +18,16 @@ public class GameSurface extends JPanel implements ActionListener {
     private Pipe thirdPipe;
     private Pipe fourthPipe;
     private List<Pipe> pipes;
+    private final Rectangle birb;
+    private boolean gameOver;
 
     public GameSurface(final int width, final int height) {
         this.timer = new Timer(20, this);
         this.timer.start();
+        this.gameOver = false;
 
        addPipes();
+       this.birb = new Rectangle(300, width / 2 - 15, 30, 20);
 
     }
 
@@ -57,11 +59,25 @@ public class GameSurface extends JPanel implements ActionListener {
         g.setColor(Color.cyan);
         g.fillRect(0, 0, d.width, d.height);
 
+        g.setColor(Color.yellow);
+        g.fillRect(birb.x, birb.y, birb.width, birb.height);
+
+
 
         for (Pipe pipe : pipes) {
             g.setColor(Color.green);
             g.fillRect(pipe.getxLoc(), pipe.getyLoc(), pipe.getWidth(), pipe.getHeight());
         }
+
+        if (gameOver) {
+            g.setColor(Color.red);
+                g.fillRect(0, 0, d.width, d.height);
+                g.setColor(Color.black);
+                g.setFont(new Font("Arial", Font.BOLD, 48));
+                g.drawString("Game over!", 20, d.width / 2 - 24);
+                return;
+            }
+
     }
 
     @Override
@@ -71,7 +87,12 @@ public class GameSurface extends JPanel implements ActionListener {
         // this is where we set it to game over
         for (Pipe pipe: pipes) {
             pipe.setxLoc(pipe.getxLoc() - 1);
+            if(pipe.getRectangle().intersects(birb)) {
+                gameOver = true;
+            }
         }
+
+
 
         if (firstPipe.getxLoc() == 400) {
             thirdPipe.setItAll(900, 400, 400, 100);
