@@ -89,18 +89,19 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
             g.setColor(Color.green);
             g.fillRect(pipe.getxLoc(), pipe.getyLoc(), pipe.getWidth(), pipe.getHeight());
         }
-
-        g.setColor(Color.red);
-        g.setFont(new Font("Arial", Font.BOLD, 48));
-        g.drawString(String.valueOf(points), d.height / 2, d.width / 4);
+        if (!(gameOver)) {
+            g.setColor(Color.red);
+            g.setFont(new Font("Arial", Font.BOLD, 48));
+            g.drawString(String.valueOf(points), d.height / 2, d.width / 4);
+        }
 
         if (gameOver) {
-                g.setColor(Color.black);
-                g.setFont(new Font("Arial", Font.BOLD, d.height / 15));
-                g.drawString("Game over!", d.height / 5, d.width / 2 );
-                g.drawString("Points" + points, d.height / 5, d.width / 2 + PIPE_WIDTH);
-                return;
-            }
+            g.setColor(Color.black);
+            g.setFont(new Font("Arial", Font.BOLD, d.height / 15));
+            g.drawString("Game over!", d.width / 5, d.height / 2 );
+            g.drawString("Points" + points, d.width / 5, d.height / 2 + PIPE_WIDTH);
+            return;
+        }
 
     }
 
@@ -117,7 +118,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
                 gameOver = true;
             }
         }
-        if(birb.y > SCREEN_HEIGHT - SCREEN_HEIGHT / 8) {
+        if(birb.y > SCREEN_HEIGHT - SCREEN_HEIGHT / 9) {
             gameOver = true;
         }
 
@@ -125,21 +126,21 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
             birb.translate(0, 3);
         }
 
-        if (firstPipe.getxLoc() == SCREEN_WIDTH / 2) {
+        if (firstPipe.getxLoc() == SCREEN_WIDTH / 2 - PIPE_WIDTH) {
             thirdPipe.setItAll(SCREEN_WIDTH, calculateBottomY(), PIPE_HEIGHT , PIPE_WIDTH);
             fourthPipe.setItAll(SCREEN_WIDTH, thirdPipe.getyLoc() - PIPE_GAP - PIPE_HEIGHT, PIPE_HEIGHT, PIPE_WIDTH );
         }
 
         if (firstPipe.getxLoc() == -PIPE_WIDTH) {
-            firstPipe.setxLoc(SCREEN_WIDTH);
-            secondPipe.setxLoc(SCREEN_WIDTH);
+            firstPipe.setxLoc(SCREEN_WIDTH + PIPE_WIDTH);
+            secondPipe.setxLoc(SCREEN_WIDTH + PIPE_WIDTH);
             firstPipe.setyLoc(calculateBottomY());
             secondPipe.setyLoc(firstPipe.getyLoc() - PIPE_GAP - PIPE_HEIGHT);
         }
 
         if (thirdPipe.getxLoc() == -PIPE_WIDTH) {
-            thirdPipe.setxLoc(SCREEN_WIDTH);
-            fourthPipe.setxLoc(SCREEN_WIDTH);
+            thirdPipe.setxLoc(SCREEN_WIDTH + PIPE_WIDTH);
+            fourthPipe.setxLoc(SCREEN_WIDTH + PIPE_WIDTH);
             thirdPipe.setyLoc(calculateBottomY());
             fourthPipe.setyLoc(thirdPipe.getyLoc() - PIPE_GAP - PIPE_HEIGHT);
         }
