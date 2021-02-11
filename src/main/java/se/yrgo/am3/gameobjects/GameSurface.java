@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 
 import javax.swing.*;
@@ -15,18 +17,35 @@ public class GameSurface extends JPanel implements ActionListener {
     private Timer timer;
     private Pipe firstPipe;
     private Pipe secondPipe;
+    private Pipe thirdPipe;
+    private Pipe fourthPipe;
+    private List<Pipe> pipes;
 
     public GameSurface(final int width, final int height) {
         this.timer = new Timer(20, this);
         this.timer.start();
 
-        firstPipe = new Pipe(100, 400);
+       addPipes();
+
+    }
+
+    public void addPipes() {
+        pipes = new ArrayList<>();
+        pipes.add(firstPipe = new Pipe(100, 400));
         firstPipe.setxLoc(900);
         firstPipe.setyLoc(400);
-        secondPipe = new Pipe(100, 200);
+        pipes.add(secondPipe = new Pipe(100, 200));
         secondPipe.setxLoc (900);
         secondPipe.setyLoc(0);
+            pipes.add(thirdPipe = new Pipe(0,0));
+            thirdPipe.setxLoc(0);
+            thirdPipe.setyLoc(0);
+            pipes.add(fourthPipe = new Pipe(0,0));
+            fourthPipe.setxLoc(0);
+            fourthPipe.setyLoc(0);
+
     }
+
     @Override
     protected void paintComponent(Graphics g) {
         repaint(g);
@@ -39,13 +58,10 @@ public class GameSurface extends JPanel implements ActionListener {
         g.fillRect(0, 0, d.width, d.height);
 
 
-        //firstPipe.getRectangle();
-        g.setColor(Color.green);
-        g.fillRect(firstPipe.getxLoc(),firstPipe.getyLoc(),firstPipe.getWidth(), firstPipe.getHeight());
-
-        g.setColor(Color.green);
-        g.fillRect(secondPipe.getxLoc(),secondPipe.getyLoc(), secondPipe.getWidth(), secondPipe.getHeight());
-
+        for (Pipe pipe : pipes) {
+            g.setColor(Color.green);
+            g.fillRect(pipe.getxLoc(), pipe.getyLoc(), pipe.getWidth(), pipe.getHeight());
+        }
     }
 
     @Override
@@ -53,12 +69,25 @@ public class GameSurface extends JPanel implements ActionListener {
         // this will trigger on the timer event
         // this is where we update positions of different elements in the game
         // this is where we set it to game over
+        for (Pipe pipe: pipes) {
+            pipe.setxLoc(pipe.getxLoc() - 1);
+        }
 
-        firstPipe.setxLoc(firstPipe.getxLoc() - 1);
-//        firstPipe.setyLoc(400);
+        if (firstPipe.getxLoc() == 400) {
+            thirdPipe.setItAll(900, 400, 400, 100);
+            fourthPipe.setItAll(900, 0, 200, 100);
+        }
 
-        secondPipe.setxLoc(secondPipe.getxLoc() - 1);
-//        secondPipe.setyLoc(0);
+        if (firstPipe.getxLoc() == -100) {
+            firstPipe.setxLoc(900);
+            secondPipe.setxLoc(900);
+        }
+
+        if (thirdPipe.getxLoc() == -100) {
+            thirdPipe.setxLoc(900);
+            fourthPipe.setxLoc(900);
+        }
+
 
 
         this.repaint();

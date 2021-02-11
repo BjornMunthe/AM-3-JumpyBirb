@@ -43,6 +43,13 @@ public class Pipe {
         this.width = width;
     }
 
+    public void setItAll(int x, int y, int h, int w) {
+        this.xLoc = x;
+        this.yLoc = y;
+        this.height = h;
+        this.width = w;
+    }
+
     public Rectangle getRectangle() {
         return (new Rectangle(xLoc, yLoc, width, height));
     }
