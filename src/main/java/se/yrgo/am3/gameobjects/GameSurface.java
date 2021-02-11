@@ -5,6 +5,11 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import javax.imageio.ImageIO;
 
 import javax.swing.*;
 
@@ -26,8 +31,15 @@ public class GameSurface extends JPanel implements ActionListener {
     //    Fill the background
     private void repaint(Graphics g) {
         final Dimension d = this.getSize();
-        g.setColor(Color.cyan);
-        g.fillRect(0, 0, d.width, d.height);
+
+        BufferedImage img = null;
+
+        try {
+            img = ImageIO.read(new File("img/869.jpg"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        g.drawImage(img, 0, 0, 1200, 800, this);
     }
 
     @Override
