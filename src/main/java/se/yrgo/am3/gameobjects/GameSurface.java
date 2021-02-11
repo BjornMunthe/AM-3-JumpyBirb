@@ -38,7 +38,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         this.SCREEN_WIDTH = width;
         this.SCREEN_HEIGHT = height;
         this.PIPE_WIDTH = SCREEN_WIDTH/8;
-        this.PIPE_HEIGHT = 4*PIPE_WIDTH;
+        this.PIPE_HEIGHT = 8*PIPE_WIDTH;
         this.PIPE_GAP = height/5;
 
        addPipes();
@@ -95,12 +95,10 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         g.drawString(String.valueOf(points), d.height / 2, d.width / 4);
 
         if (gameOver) {
-           g.setColor(Color.red);
-                g.fillRect(0, 0, d.width, d.height);
                 g.setColor(Color.black);
-                g.setFont(new Font("Arial", Font.BOLD, 48));
-                g.drawString("Game over!", d.height /2, d.width / 2 - 24);
-                g.drawString("Points" + points, d.height / 2, d.width / 2 + 10);
+                g.setFont(new Font("Arial", Font.BOLD, d.height / 15));
+                g.drawString("Game over!", d.height / 5, d.width / 2 );
+                g.drawString("Points" + points, d.height / 5, d.width / 2 + PIPE_WIDTH);
                 return;
             }
 
@@ -111,13 +109,15 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         // this will trigger on the timer event
         // this is where we update positions of different elements in the game
         // this is where we set it to game over
+
+
         for (Pipe pipe: pipes) {
             pipe.setxLoc(pipe.getxLoc() - 2);
             if(pipe.getRectangle().intersects(birb)) {
                 gameOver = true;
             }
         }
-        if(birb.y > 650) {
+        if(birb.y > SCREEN_HEIGHT - SCREEN_HEIGHT / 8) {
             gameOver = true;
         }
 
@@ -125,29 +125,32 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
             birb.translate(0, 3);
         }
 
-        if (firstPipe.getxLoc() == 400) {
+        if (firstPipe.getxLoc() == SCREEN_WIDTH / 2) {
             thirdPipe.setItAll(SCREEN_WIDTH, calculateBottomY(), PIPE_HEIGHT , PIPE_WIDTH);
             fourthPipe.setItAll(SCREEN_WIDTH, thirdPipe.getyLoc() - PIPE_GAP - PIPE_HEIGHT, PIPE_HEIGHT, PIPE_WIDTH );
         }
 
-        if (firstPipe.getxLoc() == -100) {
+        if (firstPipe.getxLoc() == -PIPE_WIDTH) {
             firstPipe.setxLoc(SCREEN_WIDTH);
             secondPipe.setxLoc(SCREEN_WIDTH);
             firstPipe.setyLoc(calculateBottomY());
             secondPipe.setyLoc(firstPipe.getyLoc() - PIPE_GAP - PIPE_HEIGHT);
         }
 
-        if (thirdPipe.getxLoc() == -100) {
+        if (thirdPipe.getxLoc() == -PIPE_WIDTH) {
             thirdPipe.setxLoc(SCREEN_WIDTH);
             fourthPipe.setxLoc(SCREEN_WIDTH);
             thirdPipe.setyLoc(calculateBottomY());
             fourthPipe.setyLoc(thirdPipe.getyLoc() - PIPE_GAP - PIPE_HEIGHT);
         }
 
-        if (firstPipe.getxLoc() == SCREEN_WIDTH / 2 +10 || thirdPipe.getxLoc() == SCREEN_WIDTH / 2 +10) {
+        if (firstPipe.getxLoc() == SCREEN_WIDTH / 2 -PIPE_GAP || thirdPipe.getxLoc() == SCREEN_WIDTH / 2 -PIPE_GAP) {
             points++;
         }
         this.repaint();
+        if (gameOver) {
+            timer.stop();
+        }
     }
 
     @Override
