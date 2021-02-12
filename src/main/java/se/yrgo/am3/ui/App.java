@@ -9,9 +9,9 @@ public class App {
 	public static void main(String[] args) {
 			JFrame main = new JFrame("Jumpybirb");
 
-			GameSurface gs = new GameSurface(500, 650);
+			GameSurface gs = new GameSurface(1000, 650);
 
-			main.setSize(500, 650);
+			main.setSize(1000, 650);
 			main.setResizable(false);
 			main.add(gs);
 			main.addKeyListener(gs);

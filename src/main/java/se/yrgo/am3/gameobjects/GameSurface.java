@@ -24,7 +24,6 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     private final Rectangle birb;
     private boolean gameOver;
     private int points = 0;
-    private int size;
     private final int SCREEN_WIDTH;
     private final int SCREEN_HEIGHT;
     private final int PIPE_WIDTH;
@@ -39,7 +38,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         this.SCREEN_HEIGHT = height;
         this.PIPE_WIDTH = SCREEN_WIDTH/8;
         this.PIPE_HEIGHT = 8*PIPE_WIDTH;
-        this.PIPE_GAP = height/5;
+        this.PIPE_GAP = height/6;
 
        addPipes();
        this.birb = new Rectangle(SCREEN_WIDTH / 2, height / 4, 30, 20);
@@ -49,7 +48,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     private int calculateBottomY() {
         int temp = 0;
         while(temp <= PIPE_GAP+50 || temp >= SCREEN_HEIGHT-PIPE_GAP) {
-            temp = ThreadLocalRandom.current().nextInt((int) (SCREEN_HEIGHT / 2 * 1.25));
+            temp = ThreadLocalRandom.current().nextInt(SCREEN_HEIGHT - PIPE_GAP);
         }
         return temp;
     }
@@ -57,10 +56,10 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     public void addPipes() {
         pipes = new ArrayList<>();
         pipes.add(firstPipe = new Pipe(PIPE_WIDTH, PIPE_HEIGHT));
-        firstPipe.setxLoc(SCREEN_WIDTH);
+        firstPipe.setxLoc(SCREEN_WIDTH + PIPE_WIDTH);
         firstPipe.setyLoc(calculateBottomY());
         pipes.add(secondPipe = new Pipe(PIPE_WIDTH, PIPE_HEIGHT));
-        secondPipe.setxLoc(SCREEN_WIDTH);
+        secondPipe.setxLoc(SCREEN_WIDTH + PIPE_WIDTH);
         secondPipe.setyLoc(firstPipe.getyLoc() - PIPE_GAP - PIPE_HEIGHT);
         pipes.add(thirdPipe = new Pipe(0,0));
         thirdPipe.setxLoc(0);
@@ -89,6 +88,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
             g.setColor(Color.green);
             g.fillRect(pipe.getxLoc(), pipe.getyLoc(), pipe.getWidth(), pipe.getHeight());
         }
+
         if (!(gameOver)) {
             g.setColor(Color.red);
             g.setFont(new Font("Arial", Font.BOLD, 48));
@@ -140,14 +140,19 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
 
         if (thirdPipe.getxLoc() == -PIPE_WIDTH) {
             thirdPipe.setxLoc(SCREEN_WIDTH + PIPE_WIDTH);
-            fourthPipe.setxLoc(SCREEN_WIDTH + PIPE_WIDTH);
+            fourthPipe.setxLoc(SCREEN_WIDTH + PIPE_WIDTH );
             thirdPipe.setyLoc(calculateBottomY());
             fourthPipe.setyLoc(thirdPipe.getyLoc() - PIPE_GAP - PIPE_HEIGHT);
         }
 
-        if (firstPipe.getxLoc() == SCREEN_WIDTH / 2 -PIPE_GAP || thirdPipe.getxLoc() == SCREEN_WIDTH / 2 -PIPE_GAP) {
+        if (firstPipe.getxLoc() == birb.x - PIPE_WIDTH) {
             points++;
         }
+
+        if (fourthPipe.getxLoc() == birb.x) {
+            points++;
+        }
+
         this.repaint();
         if (gameOver) {
             timer.stop();
@@ -173,6 +178,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         if (kc == KeyEvent.VK_SPACE && gameOver == true) {
             gameOver = false;
             this.repaint();
+            timer.start();
         }
     }
 
