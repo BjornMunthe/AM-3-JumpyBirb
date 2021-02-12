@@ -37,7 +37,8 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     private Image background;
     private Image topPipe;
     private Image bottomPipe;
-    private int counter;
+    private int backgroundCounter;
+    private int fallingCounter;
 
 
     public GameSurface(final int width, final int height) throws IOException {
@@ -120,7 +121,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     private void repaint(Graphics g) {
         final Dimension d = this.getSize();
 
-        g.drawImage(background, -counter/2, 0, SCREEN_WIDTH*2, SCREEN_HEIGHT, this);
+        g.drawImage(background, -backgroundCounter/2, 0, SCREEN_WIDTH*2, SCREEN_HEIGHT, this);
         g.drawImage(birbDown, birb.x, birb.y, birb.width, birb.height, this);
 
         for (Pipe pipe : pipes) {
@@ -164,8 +165,19 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
             gameOver = true;
         }
 
-        if (birb.y < (this.getSize().height - birb.height - 10)){
-            birb.translate(0, 3);
+        if (birb.y < (this.getSize().height - birb.height - 10)) {
+            if (fallingCounter>0 && fallingCounter<5){
+                birb.translate(0, -(2*fallingCounter*fallingCounter - 3*fallingCounter-2));
+            }
+            if (fallingCounter > 12 && fallingCounter < 26) {
+                birb.translate(0, 1);
+            }
+            else if (fallingCounter >= 26 && fallingCounter < 40) {
+                birb.translate(0, 3);
+            }
+            else if (fallingCounter >= 40) {
+                birb.translate(0, 5);
+            }
         }
 
         if (firstPipe.getxLoc() == SCREEN_WIDTH / 2 - PIPE_WIDTH) {
@@ -192,13 +204,12 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
             points++;
         }
 
-
-
-        if (counter >= 2*SCREEN_WIDTH) {
-            counter = 0;
+        if (backgroundCounter >= 2*SCREEN_WIDTH) {
+            backgroundCounter = 0;
         }
-        counter++;
 
+        fallingCounter++;
+        backgroundCounter++;
         this.repaint();
         if (gameOver) {
             timer.stop();
@@ -219,8 +230,9 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         final int kc = e.getKeyCode();
 
         if (kc == KeyEvent.VK_SPACE && birb.y > minHeight) {
-            birb.translate(0, -30);
-        }
+            fallingCounter = 0;
+            }
+
         if (kc == KeyEvent.VK_SPACE && gameOver == true) {
             gameOver = false;
             this.repaint();
