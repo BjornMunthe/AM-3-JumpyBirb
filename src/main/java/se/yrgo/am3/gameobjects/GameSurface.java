@@ -37,6 +37,8 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     private Image background;
     private Image topPipe;
     private Image bottomPipe;
+    private int counter;
+
 
     public GameSurface(final int width, final int height) throws IOException {
         this.timer = new Timer(20, this);
@@ -118,7 +120,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     private void repaint(Graphics g) {
         final Dimension d = this.getSize();
 
-        g.drawImage(background, 0, 0, SCREEN_WIDTH*2, SCREEN_HEIGHT, this);
+        g.drawImage(background, -counter/2, 0, SCREEN_WIDTH*2, SCREEN_HEIGHT, this);
         g.drawImage(birbDown, birb.x, birb.y, birb.width, birb.height, this);
 
         for (Pipe pipe : pipes) {
@@ -190,9 +192,12 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
             points++;
         }
 
-        if (fourthPipe.getxLoc() == birb.x) {
-            points++;
+
+
+        if (counter >= 2*SCREEN_WIDTH) {
+            counter = 0;
         }
+        counter++;
 
         this.repaint();
         if (gameOver) {
