@@ -5,11 +5,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class GameSurface extends JPanel implements ActionListener, KeyListener {
@@ -30,8 +34,10 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     private final int PIPE_WIDTH;
     private final int PIPE_HEIGHT;
     private final int PIPE_GAP;
+    private Image birbDown;
+    private Image background;
 
-    public GameSurface(final int width, final int height) {
+    public GameSurface(final int width, final int height) throws IOException {
         this.timer = new Timer(20, this);
         this.timer.start();
         this.gameOver = false;
@@ -43,9 +49,25 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
 
        addPipes();
        this.birb = new Rectangle(SCREEN_WIDTH / 2, height / 4, 30, 20);
-
+       setImage();
     }
 
+    public void setImage() {
+        try {
+            BufferedImage image = null;
+            image = ImageIO.read(new File("img/background.png"));
+            background = image;
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        try {
+            BufferedImage image = null;
+            image = ImageIO.read(new File("src/main/java/se/yrgo/am3/gameobjects/birbner.png"));
+            birbDown = image;
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+    }
     private int calculateBottomY() {
         int temp = 0;
         while(temp <= PIPE_GAP+50 || temp >= SCREEN_HEIGHT-PIPE_GAP) {
@@ -79,11 +101,9 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     //    Fill the background
     private void repaint(Graphics g) {
         final Dimension d = this.getSize();
-        g.setColor(Color.cyan);
-        g.fillRect(0, 0, d.width, d.height);
 
-        g.setColor(Color.yellow);
-        g.fillRect(birb.x, birb.y, birb.width, birb.height);
+        g.drawImage(background, 0, 0, SCREEN_WIDTH*2, SCREEN_HEIGHT, this);
+        g.drawImage(birbDown, birb.x, birb.y, birb.width, birb.height, this);
 
         for (Pipe pipe : pipes) {
             g.setColor(Color.green);
@@ -145,7 +165,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
             fourthPipe.setyLoc(thirdPipe.getyLoc() - PIPE_GAP - PIPE_HEIGHT);
         }
 
-        if (firstPipe.getxLoc() == SCREEN_WIDTH / 2 -PIPE_GAP || thirdPipe.getxLoc() == SCREEN_WIDTH / 2 -PIPE_GAP) {
+        if (firstPipe.getxLoc() == SCREEN_WIDTH / 2 -PIPE_WIDTH || thirdPipe.getxLoc() == SCREEN_WIDTH / 2 -PIPE_WIDTH) {
             points++;
         }
         this.repaint();

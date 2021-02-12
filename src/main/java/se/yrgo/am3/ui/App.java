@@ -2,11 +2,13 @@ package se.yrgo.am3.ui;
 
 import se.yrgo.am3.gameobjects.*;
 import javax.swing.*;
+import java.io.IOException;
+
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
 
 public class App {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 			JFrame main = new JFrame("Jumpybirb");
 
 			GameSurface gs = new GameSurface(500, 650);
