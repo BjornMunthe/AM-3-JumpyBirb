@@ -5,10 +5,16 @@ import java.awt.*;
 public class Pipe {
     private int xLoc, yLoc;
     private int width, height;
+    private String pos;
 
-    public Pipe(int initialWidth, int initialHeight) {
+    public Pipe(int initialWidth, int initialHeight, String inpos) {
         this.width = initialWidth;
         this.height = initialHeight;
+        this.pos = inpos;
+    }
+
+    public String getPos() {
+        return pos;
     }
 
     public int getxLoc() {
