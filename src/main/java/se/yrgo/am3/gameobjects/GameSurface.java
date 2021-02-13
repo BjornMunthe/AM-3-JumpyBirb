@@ -42,7 +42,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
 
 
     public GameSurface(final int width, final int height) throws IOException {
-        this.timer = new Timer(20, this);
+        this.timer = new Timer(5 , this);
         this.timer.start();
         this.gameOver = false;
         this.SCREEN_WIDTH = width;
@@ -52,28 +52,28 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         this.PIPE_GAP = height/6;
 
        addPipes();
-       this.birb = new Rectangle(SCREEN_WIDTH / 2, height / 4, 30, 20);
+       this.birb = new Rectangle(SCREEN_WIDTH / 2, height / 4, 60, 40);
        setImage();
     }
 
     public void setImage() {
         try {
             BufferedImage image = null;
-            image = ImageIO.read(new File("img/background.png"));
+            image = ImageIO.read(new File("src/main/resources/background.png"));
             background = image;
         } catch (Exception e) {
             // TODO: handle exception
         }
         try {
             BufferedImage image = null;
-            image = ImageIO.read(new File("src/main/java/se/yrgo/am3/gameobjects/birbner.png"));
+            image = ImageIO.read(new File("src/main/resources/birbner.png"));
             birbDown = image;
         } catch (Exception e) {
             // TODO: handle exception
         }
         try {
             BufferedImage image = null;
-            image = ImageIO.read(new File("img/topPipe.png"));
+            image = ImageIO.read(new File("src/main/resources/topPipe.png"));
             topPipe = image;
         } catch (Exception e) {
             // TODO: handle exception
@@ -81,7 +81,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
 
         try {
             BufferedImage image = null;
-            image = ImageIO.read(new File("img/bottomPipe.png"));
+            image = ImageIO.read(new File("src/main/resources/bottomPipe.png"));
             bottomPipe = image;
         } catch (Exception e) {
             // TODO: handle exception
@@ -97,19 +97,10 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
 
     public void addPipes() {
         pipes = new ArrayList<>();
-        pipes.add(firstPipe = new Pipe(PIPE_WIDTH, PIPE_HEIGHT, "top"));
-        firstPipe.setxLoc(SCREEN_WIDTH + PIPE_WIDTH);
-        firstPipe.setyLoc(calculateBottomY());
-        pipes.add(secondPipe = new Pipe(PIPE_WIDTH, PIPE_HEIGHT, "bot"));
-        secondPipe.setxLoc(SCREEN_WIDTH + PIPE_WIDTH);
-        secondPipe.setyLoc(firstPipe.getyLoc() - PIPE_GAP - PIPE_HEIGHT);
-        pipes.add(thirdPipe = new Pipe(0,0, "top"));
-        thirdPipe.setxLoc(0);
-        thirdPipe.setyLoc(0);
-        pipes.add(fourthPipe = new Pipe(0,0 , "bot"));
-        fourthPipe.setxLoc(0);
-        fourthPipe.setyLoc(0);
-
+        pipes.add(firstPipe = new Pipe(PIPE_WIDTH, PIPE_HEIGHT,SCREEN_WIDTH + PIPE_WIDTH,calculateBottomY(), "top"));
+        pipes.add(secondPipe = new Pipe(PIPE_WIDTH, PIPE_HEIGHT,SCREEN_WIDTH + PIPE_WIDTH, firstPipe.getyLoc() - PIPE_GAP - PIPE_HEIGHT,"bot"));
+        pipes.add(thirdPipe = new Pipe(0,0,0,0, "top"));
+        pipes.add(fourthPipe = new Pipe(0,0, 0,0, "bot"));
     }
 
     @Override
@@ -226,7 +217,6 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         }
 
         final int minHeight = 10;
-        final int maxHeight = this.getSize().height - birb.height - 10;
         final int kc = e.getKeyCode();
 
         if (kc == KeyEvent.VK_SPACE && birb.y > minHeight) {
