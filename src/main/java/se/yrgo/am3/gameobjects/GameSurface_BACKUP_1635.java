@@ -3,6 +3,7 @@ package se.yrgo.am3.gameobjects;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+<<<<<<< HEAD
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
@@ -11,8 +12,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+=======
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
-
+import javax.imageio.ImageIO;
+>>>>>>> main
 
 
 import javax.imageio.ImageIO;
@@ -123,6 +129,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     private void repaint(Graphics g) {
         final Dimension d = this.getSize();
 
+<<<<<<< HEAD
         g.drawImage(background, -backgroundCounter/2, 0, SCREEN_WIDTH*2, SCREEN_HEIGHT, this);
         g.drawImage(birbDown, birb.x, birb.y, birb.width, birb.height, this);
 
@@ -148,6 +155,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
             return;
         }
 
+=======
         BufferedImage img = null;
 
         try {
@@ -156,6 +164,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
             e.printStackTrace();
         }
         g.drawImage(img, 0, 0, 1200, 800, this);
+>>>>>>> main
     }
 
     @Override

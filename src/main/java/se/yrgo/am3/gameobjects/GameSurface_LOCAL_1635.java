@@ -11,8 +11,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import java.net.URL;
-
 
 
 import javax.imageio.ImageIO;
@@ -148,14 +146,6 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
             return;
         }
 
-        BufferedImage img = null;
-
-        try {
-            img = ImageIO.read(new File("img/869.jpg"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        g.drawImage(img, 0, 0, 1200, 800, this);
     }
 
     @Override
