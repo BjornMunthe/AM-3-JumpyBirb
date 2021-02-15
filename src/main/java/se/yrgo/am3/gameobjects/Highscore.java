@@ -65,7 +65,9 @@ public class Highscore {
     }
 
     private void writeFile() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("highscore.txt"))) {
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(textfile))) {
+
             for (int i = 0; i < 10; i++) {
 
                 writer.write(String.format("%s %d%n", names[i], points[i]));
