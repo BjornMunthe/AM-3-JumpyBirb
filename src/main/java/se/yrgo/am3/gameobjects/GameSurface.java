@@ -148,14 +148,6 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
             return;
         }
 
-        BufferedImage img = null;
-
-        try {
-            img = ImageIO.read(new File("img/869.jpg"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        g.drawImage(img, 0, 0, 1200, 800, this);
     }
 
     @Override
