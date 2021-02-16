@@ -34,6 +34,8 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     private final int PIPE_HEIGHT;
     private final int PIPE_GAP;
     private Image birbDown;
+    private Image birbUp;
+    private Image birbDead;
     private Image background;
     private Image topPipe;
     private Image bottomPipe;
@@ -41,8 +43,8 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     private int fallingCounter;
 
 
-    public GameSurface(final int width, final int height) throws IOException {
-        this.timer = new Timer(5 , this);
+    public GameSurface(final int width, final int height) {
+        this.timer = new Timer(14 , this);
         this.timer.start();
         this.gameOver = false;
         this.SCREEN_WIDTH = width;
@@ -50,42 +52,24 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         this.PIPE_WIDTH = SCREEN_WIDTH/8;
         this.PIPE_HEIGHT = height;
         this.PIPE_GAP = height/6;
-
-       addPipes();
-       this.birb = new Rectangle(SCREEN_WIDTH / 2, height / 4, 60, 40);
-       setImage();
+        addPipes();
+        this.birb = new Rectangle(SCREEN_WIDTH / 2, height / 4, 60, 40);
+        this.background = setImage("src/main/resources/background.png");
+        this.birbDown = setImage("src/main/resources/birbner.png");
+        this.birbUp = setImage("src/main/resources/birbupp.png");
+        this.birbDead = setImage("src/main/resources/Dead.png");
+        this.topPipe = setImage("src/main/resources/topPipe.png");
+        this.bottomPipe = setImage("src/main/resources/bottomPipe.png");
     }
 
-    public void setImage() {
+    public BufferedImage setImage(String path) {
+        BufferedImage image = null;
         try {
-            BufferedImage image = null;
-            image = ImageIO.read(new File("src/main/resources/background.png"));
-            background = image;
+            image = ImageIO.read(new File(path));
         } catch (Exception e) {
             // TODO: handle exception
         }
-        try {
-            BufferedImage image = null;
-            image = ImageIO.read(new File("src/main/resources/birbner.png"));
-            birbDown = image;
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
-        try {
-            BufferedImage image = null;
-            image = ImageIO.read(new File("src/main/resources/topPipe.png"));
-            topPipe = image;
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
-
-        try {
-            BufferedImage image = null;
-            image = ImageIO.read(new File("src/main/resources/bottomPipe.png"));
-            bottomPipe = image;
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
+        return image;
     }
     private int calculateBottomY() {
         int temp = 0;
@@ -111,9 +95,13 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     //    Fill the background
     private void repaint(Graphics g) {
         final Dimension d = this.getSize();
-
         g.drawImage(background, -backgroundCounter/2, 0, SCREEN_WIDTH*2, SCREEN_HEIGHT, this);
-        g.drawImage(birbDown, birb.x, birb.y, birb.width, birb.height, this);
+        if (fallingCounter < 20 && fallingCounter > 3 && gameOver != true) {
+            g.drawImage(birbDown, birb.x, birb.y, birb.width, birb.height, this);
+        }
+        else if (gameOver != true){
+            g.drawImage(birbUp, birb.x, birb.y, birb.width, birb.height, this);
+        }
 
         for (Pipe pipe : pipes) {
             if (pipe.getPos().equals("top")) {
@@ -134,7 +122,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
             g.setFont(new Font("Arial", Font.BOLD, d.height / 15));
             g.drawString("Game over!", d.width / 5, d.height / 2 );
             g.drawString("Points" + points, d.width / 5, d.height / 2 + PIPE_WIDTH);
-            return;
+            g.drawImage(birbDead, birb.x, birb.y, birb.width, birb.height, this);
         }
 
     }
