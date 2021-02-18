@@ -7,9 +7,11 @@ public class Pipe {
     private int width, height;
     private String pos;
 
-    public Pipe(int initialWidth, int initialHeight, String inpos) {
+    public Pipe(int initialWidth, int initialHeight,int x, int y, String inpos) {
         this.width = initialWidth;
         this.height = initialHeight;
+        this.xLoc = x;
+        this.yLoc = y;
         this.pos = inpos;
     }
 
