@@ -3,15 +3,20 @@ package se.yrgo.am3.gameobjects;
 import java.io.*;
 
 public class Highscore {
-    private int[] points = new int[10];
-    private String[] names = new String[10];
+    private int[] points;
+    private String[] names;
     private File textfile;
 
+    /*
+    constructor that reads highscoredata from the appropriate file, if it exists, into the points and names arrays.
+     */
     public Highscore() {
+        points = new int[10];
+        names = new String[10];
         textfile = new File("highscore.txt");
         if (textfile.exists()) {
             try (BufferedReader reader = new BufferedReader(new FileReader(textfile))) {
-                for (int i = 0; i < 10; i++) {
+                for (int i = 0; i < points.length; i++) {
                     String line = reader.readLine();
                     if (line != null) {
                         String[] inputString = line.split(" ");
@@ -36,6 +41,12 @@ public class Highscore {
         }
     }
 
+    /**
+     * Function that places the entered values in the appropriate places of the names and points arrays.
+     * discards the previous last entries of each array
+     * @param in the points reached
+     * @param str the name entered by the player
+     */
     public void newEntry(int in, String str) {
         int placHInt = 0;
         String placHString = null;
@@ -60,10 +71,49 @@ public class Highscore {
         writeFile();
     }
 
+    //function for calculating number of characters of each highscore entry
+    private int entryLength(String name, int point, int placement) {
+        int nameLength = name.length();
+        int pointLength = String.valueOf(point).length();
+        int placementLength = String.valueOf(placement).length() + 2;
+        return nameLength + pointLength;
+    }
+
+    /**
+     * function returning a string containing the entries of the highscore arrays.
+     *     dots are appended to each row between the name and point values until the rowlength integer
+     *     passed to this function is reached
+     * @param rowlength the desired length of each line in the string returned
+     * @return a string starting with a line reading "Highscore" followed by ten numbered lines containing
+     * the highscore data
+     */
+    public String printHighscore(int rowlength) {
+        StringBuilder builder = new StringBuilder("Highscore\n");
+        for (int i = 0; i < points.length; i++) {
+            int place = i +1;
+            builder.append(place);
+            builder.append(". ");
+            if (points[i] != 0) {
+                builder.append(names[i]);
+                for (int j = 0; j < (rowlength - entryLength(names[i], points[i], place)); j++) {
+                    builder.append(".");
+                }
+                builder.append(points[i]);
+            } else {
+                for (int j = 0; j < (1 + rowlength - entryLength("", 0, place)); j++) {
+                    builder.append(".");
+                }
+            }
+            builder.append("\n");
+        }
+        return builder.toString();
+    }
+
+    //returns the lowest of the highscore to determine if the points reached qualifies for the highscore
     public int getLowscore() {
         return points[9];
     }
-
+    //writes the current highscoredata to a file after each entry. called by the newEntry function
     private void writeFile() {
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(textfile))) {
