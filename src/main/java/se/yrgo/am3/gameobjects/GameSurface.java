@@ -27,7 +27,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     private Pipe thirdPipe;
     private Pipe fourthPipe;
     private List<Pipe> pipes;
-    private final Rectangle birb;
+    private Rectangle birb;
     private boolean gameOver;
     private int points = 0;
     private final int SCREEN_WIDTH;
@@ -44,25 +44,21 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     private int backgroundCounter;
     private int fallingCounter;
     private Highscore highscore;
-    private PopupFactory pf;
-    private HighscorePopup highscorePopup;
-    private Window container;
-    private Frame parentFrame;
-    //private Popup popup;
 
+    private int roundsPlayed;
 
 
     public GameSurface(final int width, final int height) {
-        this.timer = new Timer(14 , this);
-        this.timer.start();
+        this.timer = new Timer(14, this);
+        this.roundsPlayed = 0;
         this.gameOver = false;
         this.SCREEN_WIDTH = width;
         this.SCREEN_HEIGHT = height;
-        this.PIPE_WIDTH = SCREEN_WIDTH/8;
+        this.PIPE_WIDTH = SCREEN_WIDTH / 8;
         this.PIPE_HEIGHT = height;
-        this.PIPE_GAP = height/6;
+        this.PIPE_GAP = height / 6;
         addPipes();
-        this.birb = new Rectangle(SCREEN_WIDTH / 2, height / 4, 60, 40);
+        this.birb = new Rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4, 60, 40);
         this.background = setImage("src/main/resources/background.png");
         this.birbDown = setImage("src/main/resources/birbner.png");
         this.birbUp = setImage("src/main/resources/birbupp.png");
@@ -70,21 +66,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         this.topPipe = setImage("src/main/resources/topPipe.png");
         this.bottomPipe = setImage("src/main/resources/bottomPipe.png");
         this.highscore = new Highscore();
-
-        this.container = SwingUtilities.windowForComponent(this);
-        if (container instanceof Frame) {
-            parentFrame = (Frame)container;
-        }
-        this.pf = new PopupFactory();
-        //this.highscorePopup = new HighscorePopup();
-
-        //highscorePopup.setVisible(false);
-        //highscorePopup.setVisible(false);
-       // this.popup = pf.getPopup(this, highscorePopup, SCREEN_WIDTH/2, SCREEN_HEIGHT/ 2);
-        //this.popup.hide();
-
-
-
+        this.repaint();
     }
 
 
@@ -97,9 +79,10 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         }
         return image;
     }
+
     private int calculateBottomY() {
         int temp = 0;
-        while(temp <= PIPE_GAP+50 || temp >= SCREEN_HEIGHT-PIPE_GAP) {
+        while (temp <= PIPE_GAP + 50 || temp >= SCREEN_HEIGHT - PIPE_GAP) {
             temp = ThreadLocalRandom.current().nextInt(SCREEN_HEIGHT - PIPE_GAP);
         }
         return temp;
@@ -107,10 +90,10 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
 
     public void addPipes() {
         pipes = new ArrayList<>();
-        pipes.add(firstPipe = new Pipe(PIPE_WIDTH, PIPE_HEIGHT,SCREEN_WIDTH + PIPE_WIDTH,calculateBottomY(), "top"));
-        pipes.add(secondPipe = new Pipe(PIPE_WIDTH, PIPE_HEIGHT,SCREEN_WIDTH + PIPE_WIDTH, firstPipe.getyLoc() - PIPE_GAP - PIPE_HEIGHT,"bot"));
-        pipes.add(thirdPipe = new Pipe(0,0,0,0, "top"));
-        pipes.add(fourthPipe = new Pipe(0,0, 0,0, "bot"));
+        pipes.add(firstPipe = new Pipe(PIPE_WIDTH, PIPE_HEIGHT, SCREEN_WIDTH + PIPE_WIDTH, calculateBottomY(), "top"));
+        pipes.add(secondPipe = new Pipe(PIPE_WIDTH, PIPE_HEIGHT, SCREEN_WIDTH + PIPE_WIDTH, firstPipe.getyLoc() - PIPE_GAP - PIPE_HEIGHT, "bot"));
+        pipes.add(thirdPipe = new Pipe(0, 0, 0, 0, "top"));
+        pipes.add(fourthPipe = new Pipe(0, 0, 0, 0, "bot"));
     }
 
     @Override
@@ -118,32 +101,37 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         repaint(g);
     }
 
-    //    Fill the background
     private void repaint(Graphics g) {
         final Dimension d = this.getSize();
-        g.drawImage(background, -backgroundCounter/2, 0, SCREEN_WIDTH*2, SCREEN_HEIGHT, this);
-        if (fallingCounter < 20 && fallingCounter > 3 && gameOver != true) {
-            g.drawImage(birbDown, birb.x, birb.y, birb.width, birb.height, this);
-        }
-        else if (gameOver != true){
-            g.drawImage(birbUp, birb.x, birb.y, birb.width, birb.height, this);
+
+        if (roundsPlayed == 0) {
+            g.setColor(Color.green);
+            g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+            g.setColor(Color.black);
+            g.setFont(new Font("Arial", Font.BOLD, d.height / 15));
+            g.drawString("Welcome to Jumpybirb!", d.width / 10, 2 * d.height / 5);
+            g.drawString("Press SPACE to start", d.width / 10, 3 * d.height / 5);
         }
 
-        for (Pipe pipe : pipes) {
-            if (pipe.getPos().equals("top")) {
-                g.drawImage(topPipe, pipe.getxLoc(), pipe.getyLoc(), pipe.getWidth(), pipe.getHeight(), this);
-            } else if (pipe.getPos().equals("bot")) {
-                g.drawImage(bottomPipe, pipe.getxLoc(), pipe.getyLoc(), pipe.getWidth(), pipe.getHeight(), this);
+        else {
+            g.drawImage(background, -backgroundCounter / 2, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT, this);
+
+            if (fallingCounter < 20 && fallingCounter > 3 && gameOver != true) {
+                g.drawImage(birbDown, birb.x, birb.y, birb.width, birb.height, this);
+            } else if (gameOver != true) {
+                g.drawImage(birbUp, birb.x, birb.y, birb.width, birb.height, this);
             }
-        }
 
-        if (!(gameOver)) {
-            g.setColor(Color.red);
-            g.setFont(new Font("Arial", Font.BOLD, 48));
-            g.drawString(String.valueOf(points), d.height / 2, d.width / 4);
-        }
+            for (Pipe pipe : pipes) {
+                if (pipe.getPos().equals("top")) {
+                    g.drawImage(topPipe, pipe.getxLoc(), pipe.getyLoc(), pipe.getWidth(), pipe.getHeight(), this);
+                } else if (pipe.getPos().equals("bot")) {
+                    g.drawImage(bottomPipe, pipe.getxLoc(), pipe.getyLoc(), pipe.getWidth(), pipe.getHeight(), this);
+                }
+            }
 
         if (gameOver) {
+
             String[] strings = highscore.printHighscore(20);
             int y = 100;
             g.setColor(Color.black);
@@ -157,44 +145,46 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
             }
             g.drawImage(birbDead, birb.x, birb.y, birb.width, birb.height, this);
         }
+            if (!gameOver) {
+                g.setColor(Color.red);
+                g.setFont(new Font("Arial", Font.BOLD, 48));
+                g.drawString(String.valueOf(points), d.height / 2, d.width / 4);
+            }
 
+        }
     }
 
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // this will trigger on the timer event
-        // this is where we update positions of different elements in the game
-        // this is where we set it to game over
 
-        for (Pipe pipe: pipes) {
+        for (Pipe pipe : pipes) {
             pipe.setxLoc(pipe.getxLoc() - 2);
-            if(pipe.getRectangle().intersects(birb)) {
+            if (pipe.getRectangle().intersects(birb)) {
                 gameOver = true;
             }
         }
-        if(birb.y > SCREEN_HEIGHT - SCREEN_HEIGHT / 9) {
+
+        if (birb.y > SCREEN_HEIGHT - SCREEN_HEIGHT / 6) {
             gameOver = true;
         }
 
         if (birb.y < (this.getSize().height - birb.height - 10)) {
-            if (fallingCounter>0 && fallingCounter<5){
-                birb.translate(0, -(2*fallingCounter*fallingCounter - 3*fallingCounter-2));
+            if (fallingCounter > 0 && fallingCounter < 5) {
+                birb.translate(0, -(2 * fallingCounter * fallingCounter - 3 * fallingCounter - 2));
             }
             if (fallingCounter > 12 && fallingCounter < 26) {
                 birb.translate(0, 1);
-            }
-            else if (fallingCounter >= 26 && fallingCounter < 40) {
+            } else if (fallingCounter >= 26 && fallingCounter < 40) {
                 birb.translate(0, 3);
-            }
-            else if (fallingCounter >= 40) {
+            } else if (fallingCounter >= 40) {
                 birb.translate(0, 5);
             }
         }
 
         if (firstPipe.getxLoc() == SCREEN_WIDTH / 2 - PIPE_WIDTH) {
-            thirdPipe.setItAll(SCREEN_WIDTH, calculateBottomY(), PIPE_HEIGHT , PIPE_WIDTH);
-            fourthPipe.setItAll(SCREEN_WIDTH, thirdPipe.getyLoc() - PIPE_GAP - PIPE_HEIGHT, PIPE_HEIGHT, PIPE_WIDTH );
+            thirdPipe.setItAll(SCREEN_WIDTH, calculateBottomY(), PIPE_HEIGHT, PIPE_WIDTH);
+            fourthPipe.setItAll(SCREEN_WIDTH, thirdPipe.getyLoc() - PIPE_GAP - PIPE_HEIGHT, PIPE_HEIGHT, PIPE_WIDTH);
         }
 
         if (firstPipe.getxLoc() == -PIPE_WIDTH) {
@@ -206,52 +196,49 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
 
         if (thirdPipe.getxLoc() == -PIPE_WIDTH) {
             thirdPipe.setxLoc(SCREEN_WIDTH + PIPE_WIDTH);
-            fourthPipe.setxLoc(SCREEN_WIDTH + PIPE_WIDTH );
+            fourthPipe.setxLoc(SCREEN_WIDTH + PIPE_WIDTH);
             thirdPipe.setyLoc(calculateBottomY());
             fourthPipe.setyLoc(thirdPipe.getyLoc() - PIPE_GAP - PIPE_HEIGHT);
         }
 
 
-        if (firstPipe.getxLoc() == SCREEN_WIDTH / 2 -PIPE_WIDTH || thirdPipe.getxLoc() == SCREEN_WIDTH / 2 -PIPE_WIDTH) {
+        if (firstPipe.getxLoc() == SCREEN_WIDTH / 2 - PIPE_WIDTH || thirdPipe.getxLoc() == SCREEN_WIDTH / 2 - PIPE_WIDTH) {
             points++;
         }
 
-        if (backgroundCounter >= 2*SCREEN_WIDTH) {
+        if (backgroundCounter >= 2 * SCREEN_WIDTH) {
             backgroundCounter = 0;
         }
 
         fallingCounter++;
         backgroundCounter++;
         this.repaint();
-        if (gameOver && (points > highscore.getLowscore())) {
+        if (gameOver) {
 
-           // popup.show();
-            //pf.getPopup(parentFrame, highscorePopup = new HighscorePopup(), SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
-            //highscore.newEntry(points, highscorePopup.getName());
-            String s = (String)JOptionPane.showInputDialog(
-                    this,
-                    "Concratulations!\n"
-                            + "You've set a highscore\n"
-                            + points + "points\n"
-                    + "Please enter your name below:",
-                    "Highscore",
-                    JOptionPane.PLAIN_MESSAGE,
-                    null,
-                    null,
-                    "hampus");
-            highscore.newEntry(points, s);
+
+            if (points > highscore.getLowscore()) {
+            //if (points > 100) {
+                String s = (String)JOptionPane.showInputDialog(
+                        this,
+                        "Concratulations!\n"
+                                + "You've set a highscore\n"
+                                + points + "points\n"
+                        + "Please enter your name below:",
+                        "Highscore",
+                        JOptionPane.PLAIN_MESSAGE,
+                        null,
+                        null,
+                        "hampus");
+                highscore.newEntry(points, s);
+            }
             points = 0;
             timer.stop();
-            highscorePopup = null;
+            roundsPlayed++;
         }
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        // this event triggers when we release a key and then
-        // we will move the space ship if the game is not over yet
-
-
 
         final int minHeight = 10;
         final int kc = e.getKeyCode();
@@ -265,10 +252,18 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
 
         if (kc == KeyEvent.VK_SPACE && birb.y > minHeight) {
             fallingCounter = 0;
-            }
+        }
 
-        if (kc == KeyEvent.VK_SPACE && gameOver == true) {
+        if (kc == KeyEvent.VK_SPACE && roundsPlayed == 0) {
+            this.repaint();
+            timer.start();
+            roundsPlayed++;
+        }
+
+        if (kc == KeyEvent.VK_SPACE && gameOver) {
             gameOver = false;
+            addPipes();
+            this.birb = new Rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4, 60, 40);
             this.repaint();
             timer.start();
         }
