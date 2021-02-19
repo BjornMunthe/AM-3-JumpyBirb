@@ -50,6 +50,9 @@ public class Highscore {
     public void newEntry(int in, String str) {
         int placHInt = 0;
         String placHString = null;
+        if (str == null || str.equals("")) {
+            str = "Anonymous";
+        }
         for (int i = 0; i < points.length; i++) {
             if ((i == points.length-1) && (points[i] <= in)) {
                 placHInt = points[i];
