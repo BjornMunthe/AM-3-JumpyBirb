@@ -1,3 +1,7 @@
+#highscore should not be included
+
+highscore.txt
+
 # Compiled class file
 *.class
 
