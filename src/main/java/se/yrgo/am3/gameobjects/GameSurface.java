@@ -43,6 +43,13 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     private Image bottomPipe;
     private int backgroundCounter;
     private int fallingCounter;
+    private Highscore highscore;
+    private PopupFactory pf;
+    private HighscorePopup highscorePopup;
+    private Window container;
+    private Frame parentFrame;
+    //private Popup popup;
+
 
 
     public GameSurface(final int width, final int height) {
@@ -62,7 +69,24 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         this.birbDead = setImage("src/main/resources/Dead.png");
         this.topPipe = setImage("src/main/resources/topPipe.png");
         this.bottomPipe = setImage("src/main/resources/bottomPipe.png");
+        this.highscore = new Highscore();
+
+        this.container = SwingUtilities.windowForComponent(this);
+        if (container instanceof Frame) {
+            parentFrame = (Frame)container;
+        }
+        this.pf = new PopupFactory();
+        //this.highscorePopup = new HighscorePopup();
+
+        //highscorePopup.setVisible(false);
+        //highscorePopup.setVisible(false);
+       // this.popup = pf.getPopup(this, highscorePopup, SCREEN_WIDTH/2, SCREEN_HEIGHT/ 2);
+        //this.popup.hide();
+
+
+
     }
+
 
     public BufferedImage setImage(String path) {
         BufferedImage image = null;
@@ -120,21 +144,28 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         }
 
         if (gameOver) {
+            String[] strings = highscore.printHighscore(20);
+            int y = 100;
             g.setColor(Color.black);
             g.setFont(new Font("Arial", Font.BOLD, d.height / 15));
-            g.drawString("Game over!", d.width / 5, d.height / 2 );
-            g.drawString("Points" + points, d.width / 5, d.height / 2 + PIPE_WIDTH);
+           // g.drawString("Game over!", d.width / 5, d.height / 2 );
+           // g.drawString("Points" + points, d.width / 5, d.height / 2 + PIPE_WIDTH);
+            for (String strin : strings) {
+
+                g.drawString(strin, 30, y);
+                y += 40;
+            }
             g.drawImage(birbDead, birb.x, birb.y, birb.width, birb.height, this);
         }
 
     }
+
 
     @Override
     public void actionPerformed(ActionEvent e) {
         // this will trigger on the timer event
         // this is where we update positions of different elements in the game
         // this is where we set it to game over
-
 
         for (Pipe pipe: pipes) {
             pipe.setxLoc(pipe.getxLoc() - 2);
@@ -192,8 +223,26 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         fallingCounter++;
         backgroundCounter++;
         this.repaint();
-        if (gameOver) {
+        if (gameOver && (points > highscore.getLowscore())) {
+
+           // popup.show();
+            //pf.getPopup(parentFrame, highscorePopup = new HighscorePopup(), SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
+            //highscore.newEntry(points, highscorePopup.getName());
+            String s = (String)JOptionPane.showInputDialog(
+                    this,
+                    "Concratulations!\n"
+                            + "You've set a highscore\n"
+                            + points + "points\n"
+                    + "Please enter your name below:",
+                    "Highscore",
+                    JOptionPane.PLAIN_MESSAGE,
+                    null,
+                    null,
+                    "hampus");
+            highscore.newEntry(points, s);
+            points = 0;
             timer.stop();
+            highscorePopup = null;
         }
     }
 
@@ -202,12 +251,17 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         // this event triggers when we release a key and then
         // we will move the space ship if the game is not over yet
 
-        if (gameOver) {
-            return;
-        }
+
 
         final int minHeight = 10;
         final int kc = e.getKeyCode();
+
+        if (gameOver) {
+            if (kc == KeyEvent.VK_SPACE) {
+                gameOver = false;
+                timer.start();
+            }
+        }
 
         if (kc == KeyEvent.VK_SPACE && birb.y > minHeight) {
             fallingCounter = 0;

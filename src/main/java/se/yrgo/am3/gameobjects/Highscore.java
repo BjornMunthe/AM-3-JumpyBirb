@@ -87,26 +87,29 @@ public class Highscore {
      * @return a string starting with a line reading "Highscore" followed by ten numbered lines containing
      * the highscore data
      */
-    public String printHighscore(int rowlength) {
-        StringBuilder builder = new StringBuilder("Highscore\n");
+    public String[] printHighscore(int rowlength) {
+        String[] strings = new String[10];
+
         for (int i = 0; i < points.length; i++) {
+            StringBuilder builder = new StringBuilder();
             int place = i +1;
             builder.append(place);
             builder.append(". ");
             if (points[i] != 0) {
                 builder.append(names[i]);
                 for (int j = 0; j < (rowlength - entryLength(names[i], points[i], place)); j++) {
-                    builder.append(".");
+                    builder.append("-");
                 }
                 builder.append(points[i]);
             } else {
                 for (int j = 0; j < (1 + rowlength - entryLength("", 0, place)); j++) {
-                    builder.append(".");
+                    builder.append("-");
                 }
             }
-            builder.append("\n");
+            strings[i] = builder.toString();
         }
-        return builder.toString();
+        return strings;
+
     }
 
     //returns the lowest of the highscore to determine if the points reached qualifies for the highscore

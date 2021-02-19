@@ -12,7 +12,6 @@ public class App {
 			JFrame main = new JFrame("Jumpybirb");
 
 GameSurface gs = new GameSurface(800, 600);
-
 			main.setSize(800, 600);
 			main.setResizable(false);
 			main.add(gs);
@@ -22,3 +21,4 @@ GameSurface gs = new GameSurface(800, 600);
 	}
 
 }
+
