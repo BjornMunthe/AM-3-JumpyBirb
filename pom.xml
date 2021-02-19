@@ -36,7 +36,7 @@
 					<archive>
 						<manifest>
 							<mainClass>
-								ui.App
+								se.yrgo.am3.ui.App
 							</mainClass>
 						</manifest>
 					</archive>
