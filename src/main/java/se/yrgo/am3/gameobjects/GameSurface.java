@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ThreadLocalRandom;
 import java.net.URL;
 
@@ -108,7 +109,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
             g.setColor(Color.green);
             g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
             g.setColor(Color.black);
-            g.setFont(new Font("Arial", Font.BOLD, d.height / 15));
+            g.setFont(new Font("Candara", Font.BOLD, d.height / 15));
             g.drawString("Welcome to Jumpybirb!", d.width / 10, 2 * d.height / 5);
             g.drawString("Press SPACE to start", d.width / 10, 3 * d.height / 5);
         }
@@ -117,9 +118,9 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
             g.drawImage(background, -backgroundCounter / 2, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT, this);
 
             if (fallingCounter < 20 && fallingCounter > 3 && gameOver != true) {
-                g.drawImage(birbDown, birb.x, birb.y, birb.width, birb.height, this);
-            } else if (gameOver != true) {
                 g.drawImage(birbUp, birb.x, birb.y, birb.width, birb.height, this);
+            } else if (gameOver != true) {
+                g.drawImage(birbDown, birb.x, birb.y, birb.width, birb.height, this);
             }
 
             for (Pipe pipe : pipes) {
@@ -132,23 +133,30 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
 
         if (gameOver) {
 
-            String[] strings = highscore.printHighscore(20);
-            int y = 100;
-            g.setColor(Color.black);
-            g.setFont(new Font("Arial", Font.BOLD, d.height / 15));
+            String[] highscoreNames = highscore.getNames();
+            int[] highscorePoints = highscore.getPoints();
+            int y = 50;
+            g.setColor(Color.yellow);
+            g.setFont(new Font("Candara", Font.BOLD, d.height / 12));
            // g.drawString("Game over!", d.width / 5, d.height / 2 );
            // g.drawString("Points" + points, d.width / 5, d.height / 2 + PIPE_WIDTH);
-            for (String strin : strings) {
+            for (int i = 0; i < highscoreNames.length; i ++) {
+                StringBuilder builder = new StringBuilder();
+                builder.append(i+1);
+                builder.append(" ");
+                builder.append(highscoreNames[i]);
 
-                g.drawString(strin, 30, y);
-                y += 40;
+                g.drawString(builder.toString().toUpperCase(), SCREEN_WIDTH/14, y);
+                g.drawString(String.valueOf(highscorePoints[i]), SCREEN_WIDTH - SCREEN_WIDTH/12, y);
+                y += 50;
             }
+
             g.drawImage(birbDead, birb.x, birb.y, birb.width, birb.height, this);
         }
             if (!gameOver) {
-                g.setColor(Color.red);
-                g.setFont(new Font("Arial", Font.BOLD, 48));
-                g.drawString(String.valueOf(points), d.height / 2, d.width / 4);
+                g.setColor(Color.yellow);
+                g.setFont(new Font("Candara", Font.BOLD, 48));
+                g.drawString(String.valueOf(points), d.width / 2, d.height / 9);
             }
 
         }
@@ -222,7 +230,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
                         this,
                         "Concratulations!\n"
                                 + "You've set a highscore\n"
-                                + points + "points\n"
+                                + points + " points\n"
                         + "Please enter your name below:",
                         "Highscore",
                         JOptionPane.PLAIN_MESSAGE,

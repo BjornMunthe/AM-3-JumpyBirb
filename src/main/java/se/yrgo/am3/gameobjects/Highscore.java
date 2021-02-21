@@ -1,6 +1,7 @@
 package se.yrgo.am3.gameobjects;
 
 import java.io.*;
+import java.util.Locale;
 
 public class Highscore {
     private int[] points;
@@ -109,10 +110,18 @@ public class Highscore {
                     builder.append("-");
                 }
             }
-            strings[i] = builder.toString();
+            strings[i] = builder.toString().toUpperCase();
         }
         return strings;
 
+    }
+
+    public int[] getPoints() {
+        return points;
+    }
+
+    public String[] getNames() {
+        return names;
     }
 
     //returns the lowest of the highscore to determine if the points reached qualifies for the highscore
