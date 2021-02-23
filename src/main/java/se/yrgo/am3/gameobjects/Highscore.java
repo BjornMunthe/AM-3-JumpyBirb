@@ -1,7 +1,6 @@
 package se.yrgo.am3.gameobjects;
 
 import java.io.*;
-import java.util.Locale;
 
 public class Highscore {
     private int[] points;
@@ -20,18 +19,18 @@ public class Highscore {
                 for (int i = 0; i < points.length; i++) {
                     String line = reader.readLine();
                     if (line != null) {
-                        String[] inputString = line.split(" ");
-                        if (inputString.length > 2) {
-                            points[i] = Integer.valueOf(inputString[inputString.length-1]);
+                        String[] inputStrings = line.split(" ");
+                        if (inputStrings.length > 2) {
+                            points[i] = Integer.valueOf(inputStrings[inputStrings.length-1]);
                             StringBuilder builder = new StringBuilder();
-                            for (int j = 0; j < inputString.length - 1; j++) {
-                                builder.append(inputString[j]);
+                            for (int j = 0; j < inputStrings.length - 1; j++) {
+                                builder.append(inputStrings[j]);
                                 builder.append(" ");
                             }
                             names[i] = builder.toString().trim();
                         } else {
-                            points[i] = Integer.valueOf(inputString[1]);
-                            names[i] = inputString[0];
+                            points[i] = Integer.valueOf(inputStrings[1]);
+                            names[i] = inputStrings[0];
                         }
                     }
                 }
