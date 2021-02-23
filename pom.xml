@@ -99,6 +99,7 @@
 						<headerType>gui</headerType>
 						<outfile>target/jumpy-birb.exe</outfile>
 						<jar>target/jumpy-birb-0.0.1-SNAPSHOT.jar</jar>
+						<icon>${project.build.directory}/../src/main/resources/birbner.ico</icon>
 						<errTitle>jumpy-birb</errTitle>
 						<classPath>
 							<mainClass>se.yrgo.am3.ui.App</mainClass>
