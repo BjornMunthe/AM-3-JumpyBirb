@@ -14,7 +14,7 @@ public class Highscore {
     public Highscore() {
         points = new int[10];
         names = new String[10];
-        textfile = new File("highscore.txt");
+        textfile = new File("src/main/resources/highscore.txt");
         if (textfile.exists()) {
             try (BufferedReader reader = new BufferedReader(new FileReader(textfile))) {
                 for (int i = 0; i < points.length; i++) {

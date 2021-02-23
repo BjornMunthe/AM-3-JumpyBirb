@@ -1,6 +1,6 @@
 #highscore should not be included
 
-highscore.txt
+src/main/resources/highscore.txt
 
 # Compiled class file
 *.class
