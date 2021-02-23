@@ -243,13 +243,6 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         final int minHeight = 10;
         final int kc = e.getKeyCode();
 
-        if (gameOver) {
-            if (kc == KeyEvent.VK_SPACE) {
-                gameOver = false;
-                timer.start();
-            }
-        }
-
         if (kc == KeyEvent.VK_SPACE && birb.y > minHeight) {
             fallingCounter = 0;
         }
