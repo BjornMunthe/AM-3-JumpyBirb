@@ -12,15 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.net.URL;
-
-
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class GameSurface extends JPanel implements ActionListener, KeyListener {
     private static final long serialVersionUID = 6260582674762246325L;
-
     private Timer timer;
     private Pipe firstPipe;
     private Pipe secondPipe;
@@ -44,13 +40,11 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     private int backgroundCounter;
     private int fallingCounter;
     private Highscore highscore;
-
-    private int roundsPlayed;
-
+    private boolean firstRound;
 
     public GameSurface(final int width, final int height) {
-        this.timer = new Timer(14, this);
-        this.roundsPlayed = 0;
+        this.timer = new Timer(12, this);
+        this.firstRound = true;
         this.gameOver = false;
         this.SCREEN_WIDTH = width;
         this.SCREEN_HEIGHT = height;
@@ -103,119 +97,113 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
 
     private void repaint(Graphics g) {
         final Dimension d = this.getSize();
-
-        if (roundsPlayed == 0) {
+        if (firstRound) {
             g.setColor(Color.green);
             g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
             g.setColor(Color.black);
             g.setFont(new Font("Arial", Font.BOLD, d.height / 15));
-            g.drawString("Welcome to Jumpybirb!", d.width / 10, 2 * d.height / 5);
-            g.drawString("Press SPACE to start", d.width / 10, 3 * d.height / 5);
+            g.drawString("Welcome to Jumpybirb!", d.width / 10, 1 * d.height / 5);
+            g.drawString("Press SPACE to jump.", d.width / 10, 2 * d.height / 5);
+            g.drawString("Choose difficulty to start", d.width / 10, 3 * d.height / 5);
+            g.drawString("1: EASY   2:NORMAL    3:HARD", d.width / 10, 4 * d.height / 5);
+            timer.start();
         }
-
         else {
             g.drawImage(background, -backgroundCounter / 2, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT, this);
-
-            if (fallingCounter < 20 && fallingCounter > 3 && gameOver != true) {
+            if (fallingCounter < 20 && fallingCounter > 3 && !gameOver) {
                 g.drawImage(birbDown, birb.x, birb.y, birb.width, birb.height, this);
-            } else if (gameOver != true) {
+            }
+            else if (!gameOver) {
                 g.drawImage(birbUp, birb.x, birb.y, birb.width, birb.height, this);
             }
-
             for (Pipe pipe : pipes) {
                 if (pipe.getPos().equals("top")) {
                     g.drawImage(topPipe, pipe.getxLoc(), pipe.getyLoc(), pipe.getWidth(), pipe.getHeight(), this);
-                } else if (pipe.getPos().equals("bot")) {
+                }
+                else if (pipe.getPos().equals("bot")) {
                     g.drawImage(bottomPipe, pipe.getxLoc(), pipe.getyLoc(), pipe.getWidth(), pipe.getHeight(), this);
                 }
             }
-
         if (gameOver) {
-
             String[] strings = highscore.printHighscore(20);
             int y = 100;
             g.setColor(Color.black);
             g.setFont(new Font("Arial", Font.BOLD, d.height / 15));
-           // g.drawString("Game over!", d.width / 5, d.height / 2 );
-           // g.drawString("Points" + points, d.width / 5, d.height / 2 + PIPE_WIDTH);
+            // g.drawString("Game over!", d.width / 5, d.height / 2 );
+            // g.drawString("Points" + points, d.width / 5, d.height / 2 + PIPE_WIDTH);
             for (String strin : strings) {
-
                 g.drawString(strin, 30, y);
                 y += 40;
             }
             g.drawImage(birbDead, birb.x, birb.y, birb.width, birb.height, this);
+            g.setColor(Color.green);
+            g.fillRect(6*d.width/10,  2*d.height/10, 3*d.width/10, 4*d.height/10);
+            g.setColor(Color.black);
+            g.setFont(new Font("Arial", Font.BOLD, d.height / 35));
+            g.drawString("GAME OVER!", 13*d.width/20, 3 * d.height / 10);
+            g.drawString("Choose difficulty to play again", 6*d.width/10, 4 * d.height / 10);
+            g.drawString("1: EASY  2:NORMAL  3:HARD", 6*d.width/10, 5 * d.height / 10);
         }
             if (!gameOver) {
                 g.setColor(Color.red);
                 g.setFont(new Font("Arial", Font.BOLD, 48));
                 g.drawString(String.valueOf(points), d.height / 2, d.width / 4);
             }
-
         }
     }
 
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
         for (Pipe pipe : pipes) {
             pipe.setxLoc(pipe.getxLoc() - 2);
             if (pipe.getRectangle().intersects(birb)) {
                 gameOver = true;
             }
         }
-
         if (birb.y > SCREEN_HEIGHT - SCREEN_HEIGHT / 6) {
             gameOver = true;
         }
-
         if (birb.y < (this.getSize().height - birb.height - 10)) {
             if (fallingCounter > 0 && fallingCounter < 5) {
                 birb.translate(0, -(2 * fallingCounter * fallingCounter - 3 * fallingCounter - 2));
             }
             if (fallingCounter > 12 && fallingCounter < 26) {
                 birb.translate(0, 1);
-            } else if (fallingCounter >= 26 && fallingCounter < 40) {
+            }
+            else if (fallingCounter >= 26 && fallingCounter < 40) {
                 birb.translate(0, 3);
-            } else if (fallingCounter >= 40) {
+            }
+            else if (fallingCounter >= 40) {
                 birb.translate(0, 5);
             }
         }
-
         if (firstPipe.getxLoc() == SCREEN_WIDTH / 2 - PIPE_WIDTH) {
             thirdPipe.setItAll(SCREEN_WIDTH, calculateBottomY(), PIPE_HEIGHT, PIPE_WIDTH);
             fourthPipe.setItAll(SCREEN_WIDTH, thirdPipe.getyLoc() - PIPE_GAP - PIPE_HEIGHT, PIPE_HEIGHT, PIPE_WIDTH);
         }
-
         if (firstPipe.getxLoc() == -PIPE_WIDTH) {
             firstPipe.setxLoc(SCREEN_WIDTH + PIPE_WIDTH);
             secondPipe.setxLoc(SCREEN_WIDTH + PIPE_WIDTH);
             firstPipe.setyLoc(calculateBottomY());
             secondPipe.setyLoc(firstPipe.getyLoc() - PIPE_GAP - PIPE_HEIGHT);
         }
-
         if (thirdPipe.getxLoc() == -PIPE_WIDTH) {
             thirdPipe.setxLoc(SCREEN_WIDTH + PIPE_WIDTH);
             fourthPipe.setxLoc(SCREEN_WIDTH + PIPE_WIDTH);
             thirdPipe.setyLoc(calculateBottomY());
             fourthPipe.setyLoc(thirdPipe.getyLoc() - PIPE_GAP - PIPE_HEIGHT);
         }
-
-
         if (firstPipe.getxLoc() == SCREEN_WIDTH / 2 - PIPE_WIDTH || thirdPipe.getxLoc() == SCREEN_WIDTH / 2 - PIPE_WIDTH) {
             points++;
         }
-
         if (backgroundCounter >= 2 * SCREEN_WIDTH) {
             backgroundCounter = 0;
         }
-
         fallingCounter++;
         backgroundCounter++;
         this.repaint();
         if (gameOver) {
-
-
             if (points > highscore.getLowscore()) {
             //if (points > 100) {
                 String s = (String)JOptionPane.showInputDialog(
@@ -233,32 +221,37 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
             }
             points = 0;
             timer.stop();
-            roundsPlayed++;
         }
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-
         final int minHeight = 10;
         final int kc = e.getKeyCode();
-
-        if (kc == KeyEvent.VK_SPACE && birb.y > minHeight) {
+        if (kc == KeyEvent.VK_SPACE && birb.y > minHeight && !gameOver) {
             fallingCounter = 0;
         }
-
-        if (kc == KeyEvent.VK_SPACE && roundsPlayed == 0) {
-            this.repaint();
-            timer.start();
-            roundsPlayed++;
-        }
-
-        if (kc == KeyEvent.VK_SPACE && gameOver) {
-            gameOver = false;
+        if (firstRound || gameOver){
             addPipes();
             this.birb = new Rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4, 60, 40);
-            this.repaint();
-            timer.start();
+            if (kc == 49) {
+                gameOver = false;
+                timer.setDelay(16);
+                firstRound = false;
+                timer.start();
+            }
+            else if (kc == 50) {
+                gameOver = false;
+                timer.setDelay(13);
+                firstRound = false;
+                timer.start();
+            }
+            else if (kc == 51) {
+                gameOver = false;
+                timer.setDelay(10);
+                firstRound = false;
+                timer.start();
+            }
         }
     }
 
