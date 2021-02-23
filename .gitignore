@@ -2,6 +2,8 @@
 
 src/main/resources/highscore.txt
 
+*.exe
+
 # Compiled class file
 *.class
 

@@ -2,10 +2,13 @@ package se.yrgo.am3.gameobjects;
 
 import java.io.*;
 
+
 public class Highscore {
     private int[] points;
     private String[] names;
     private File textfile;
+    private boolean failedToReadFile;
+    private String latestEntry;
 
     /*
     constructor that reads highscoredata from the appropriate file, if it exists, into the points and names arrays.
@@ -16,6 +19,7 @@ public class Highscore {
         textfile = new File("src/main/resources/highscore.txt");
         if (textfile.exists()) {
             try (BufferedReader reader = new BufferedReader(new FileReader(textfile))) {
+
                 for (int i = 0; i < points.length; i++) {
                     String line = reader.readLine();
                     if (line != null) {
@@ -34,9 +38,11 @@ public class Highscore {
                         }
                     }
                 }
+                //throw new IOException();
             } catch (IOException exc) {
-                System.err.println("something went wrog");
+                System.err.println("Failed to read highscore");
                 exc.printStackTrace();
+                failedToReadFile = true;
             }
         }
     }
@@ -48,11 +54,13 @@ public class Highscore {
      * @param str the name entered by the player
      */
     public void newEntry(int in, String str) {
+        latestEntry = str;
         int placHInt = 0;
         String placHString = null;
-        if (str == null || str.equals("")) {
+        if (str == null || str.matches(" +") || str.length()<1) {
             str = "Anonymous";
         }
+        str = ((str.length() > 15) ? str.substring(0,15).toUpperCase() : str.toUpperCase());
         for (int i = 0; i < points.length; i++) {
             if ((i == points.length-1) && (points[i] <= in)) {
                 placHInt = points[i];
@@ -74,53 +82,41 @@ public class Highscore {
         writeFile();
     }
 
-    //function for calculating number of characters of each highscore entry
-    private int entryLength(String name, int point, int placement) {
-        int nameLength = name.length();
-        int pointLength = String.valueOf(point).length();
-        int placementLength = String.valueOf(placement).length() + 2;
-        return nameLength + pointLength;
-    }
 
     /**
-     * function returning a string containing the entries of the highscore arrays.
-     *     dots are appended to each row between the name and point values until the rowlength integer
-     *     passed to this function is reached
-     * @param rowlength the desired length of each line in the string returned
-     * @return a string starting with a line reading "Highscore" followed by ten numbered lines containing
-     * the highscore data
-     */
-    public String[] printHighscore(int rowlength) {
-        String[] strings = new String[10];
+     * function used to print the highscore data to the screen
+     * @return strings, a string array, the values of which alternates between placement and name,
+     * and the associated points
+      */
+    public String[] printHighscore() {
+        String[] strings = new String[points.length*2];
 
         for (int i = 0; i < points.length; i++) {
             StringBuilder builder = new StringBuilder();
+
             int place = i +1;
             builder.append(place);
             builder.append(". ");
-            if (points[i] != 0) {
-                builder.append(names[i]);
-                for (int j = 0; j < (rowlength - entryLength(names[i], points[i], place)); j++) {
-                    builder.append("-");
-                }
-                builder.append(points[i]);
-            } else {
-                for (int j = 0; j < (1 + rowlength - entryLength("", 0, place)); j++) {
-                    builder.append("-");
-                }
-            }
-            strings[i] = builder.toString().toUpperCase();
+            builder.append((names[i] == null || names[i].equals("null"))? "" : names[i]);
+
+            strings[i*2] = builder.toString();
+
+            strings[i*2+1] = ((points[i] == 0)? "" : String.valueOf(points[i]));
         }
         return strings;
 
+    }
+
+    public boolean fileNotRead() {
+        return failedToReadFile;
     }
 
     public int[] getPoints() {
         return points;
     }
 
-    public String[] getNames() {
-        return names;
+    public String getLatestEntry() {
+        return latestEntry;
     }
 
     //returns the lowest of the highscore to determine if the points reached qualifies for the highscore
@@ -137,8 +133,9 @@ public class Highscore {
                 writer.write(String.format("%s %d%n", names[i], points[i]));
             }
         } catch (IOException exc) {
-            System.err.println("something went wrog");
+            System.err.println("Failed to write to highscore.txt");
             exc.printStackTrace();
+            failedToReadFile = true;
         }
     }
 

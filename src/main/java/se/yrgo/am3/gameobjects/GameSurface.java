@@ -132,30 +132,30 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
             }
 
         if (gameOver) {
-
-            String[] highscoreNames = highscore.getNames();
-            int[] highscorePoints = highscore.getPoints();
-            int y = 50;
             g.setColor(Color.yellow);
             g.setFont(new Font("Candara", Font.BOLD, d.height / 12));
-           // g.drawString("Game over!", d.width / 5, d.height / 2 );
-           // g.drawString("Points" + points, d.width / 5, d.height / 2 + PIPE_WIDTH);
-            for (int i = 0; i < highscoreNames.length; i ++) {
-                StringBuilder builder = new StringBuilder();
-                builder.append(i+1);
-                builder.append(" ");
-                builder.append(highscoreNames[i]);
+            if (!highscore.fileNotRead()) {
+                String[] highscores = highscore.printHighscore();
+                int y = 50;
 
-                g.drawString(builder.toString().toUpperCase(), SCREEN_WIDTH/14, y);
-                g.drawString(String.valueOf(highscorePoints[i]), SCREEN_WIDTH - SCREEN_WIDTH/12, y);
-                y += 50;
+                g.drawString("HIGSCORES", d.width/2-120, y);
+
+                for (int i = 0; i < highscore.getPoints().length; i ++) {
+                    y += 50;
+
+                    g.drawString(highscores[i*2], d.width/14, y);
+                    g.drawString(highscores[i*2+1], d.width - d.width/12, y);
+                }
+                g.drawImage(birbDead, birb.x, birb.y, birb.width, birb.height, this);
+            } else {
+                g.drawString(String.format("Although you scored %d fabulous points,", points), 10, d.height/8);
+                g.drawString("the highscores could unfortunately not", 10, (d.height/8)*2);
+                g.drawString("be retrieved!", 10, (d.height/8)*3);
             }
-
-            g.drawImage(birbDead, birb.x, birb.y, birb.width, birb.height, this);
         }
             if (!gameOver) {
                 g.setColor(Color.yellow);
-                g.setFont(new Font("Candara", Font.BOLD, 48));
+                g.setFont(new Font("Candara", Font.BOLD, 90));
                 g.drawString(String.valueOf(points), d.width / 2, d.height / 9);
             }
 
@@ -224,8 +224,8 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         if (gameOver) {
 
 
-            if (points > highscore.getLowscore()) {
-            //if (points > 100) {
+            if (points > highscore.getLowscore() && !highscore.fileNotRead()) {
+                String defaultEntry = ((highscore.getLatestEntry()!= null) ? highscore.getLatestEntry() : "Put you're name here, champ!");
                 String s = (String)JOptionPane.showInputDialog(
                         this,
                         "Concratulations!\n"
@@ -236,7 +236,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
                         JOptionPane.PLAIN_MESSAGE,
                         null,
                         null,
-                        "hampus");
+                        defaultEntry);
                 highscore.newEntry(points, s);
             }
             points = 0;
