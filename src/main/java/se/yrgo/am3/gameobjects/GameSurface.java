@@ -35,7 +35,6 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     private Image birbUp;
     private Image birbDead;
     private Image background;
-    //Flytta ut till pipe
     private int backgroundCounter;
     private int fallingCounter;
     private Highscore highscore;
@@ -168,8 +167,8 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
 
         }
         // Under denna if sats ska ALLT komma som ska hända när spelet kör
-            if (!gameOver) {
-                // Evt egen metod för detta
+            if (!gameOver && !firstRound) {
+                //Paints the points
                 g.setColor(Color.yellow);
                 g.setFont(new Font("Candara", Font.BOLD, 90));
                 g.drawString(String.valueOf(points), d.width / 2, d.height / 9);
@@ -206,7 +205,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         }
         movePipes();
 
-        // Poängräknaren
+        //Increase points if pipes move past a point.
         if (firstPipe.getxLoc() == SCREEN_WIDTH / 2 - PIPE_WIDTH || thirdPipe.getxLoc() == SCREEN_WIDTH / 2 - PIPE_WIDTH) {
             points++;
         }
