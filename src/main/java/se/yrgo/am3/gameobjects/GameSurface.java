@@ -106,17 +106,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         //Använd SCREEN konstanter istället för denna
         final Dimension d = this.getSize();
         if (firstRound) {
-            //Allt dett i egen metod tex setStartingScreen() Borde vara bakgrundsbilden!
-            g.setColor(Color.green);
-            g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-            g.setColor(Color.black);
-
-            g.setFont(new Font("Arial", Font.BOLD, d.height / 15));
-            g.drawString("Welcome to Jumpybirb!", d.width / 10, d.height / 5);
-            g.drawString("Press SPACE to jump.", d.width / 10, 2 * d.height / 5);
-            g.drawString("Choose difficulty to start", d.width / 10, 3 * d.height / 5);
-            g.drawString("1: EASY   2:NORMAL    3:HARD", d.width / 10, 4 * d.height / 5);
-            // Kanske starta timern i konstruktorn ELLER TA BORT HELT?
+            setStartingScreen(g);
         }
         else {
             g.drawImage(background, -backgroundCounter / 2, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT, this);
@@ -126,12 +116,6 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
             }
             else if (!gameOver) {
                 g.drawImage(birbUp, birb.x, birb.y, birb.width, birb.height, this);
-            }
-
-            // Flytta ut till egen metod typ drawPipes()
-            for (Pipe pipe : pipes) {
-                g.drawImage(pipe.getPipeImage(), pipe.getxLoc(), pipe.getyLoc(), pipe.getWidth(), pipe.getHeight(), this);
-                }
             }
 
         if (gameOver) {
@@ -172,8 +156,27 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
                 g.setColor(Color.yellow);
                 g.setFont(new Font("Candara", Font.BOLD, 90));
                 g.drawString(String.valueOf(points), d.width / 2, d.height / 9);
+                drawPipes(g);
             }
         }
+    }
+
+    private void drawPipes(Graphics g) {
+        for (Pipe pipe : pipes) {
+            g.drawImage(pipe.getPipeImage(), pipe.getxLoc(), pipe.getyLoc(), pipe.getWidth(), pipe.getHeight(), this);
+        }
+    }
+
+    private void setStartingScreen(Graphics g) {
+        g.setColor(Color.green);
+        g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+        g.setColor(Color.black);
+        g.setFont(new Font("Arial", Font.BOLD, SCREEN_HEIGHT / 15));
+        g.drawString("Welcome to Jumpybirb!", SCREEN_WIDTH / 10, SCREEN_HEIGHT / 5);
+        g.drawString("Press SPACE to jump.", SCREEN_WIDTH / 10, 2 * SCREEN_HEIGHT / 5);
+        g.drawString("Choose difficulty to start", SCREEN_WIDTH / 10, 3 * SCREEN_HEIGHT / 5);
+        g.drawString("1: EASY   2:NORMAL    3:HARD", SCREEN_WIDTH / 10, 4 * SCREEN_HEIGHT/ 5);
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
