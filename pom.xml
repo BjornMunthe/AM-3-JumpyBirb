@@ -12,7 +12,19 @@
 	    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 	<build>
+
+
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<excludes>
+					<exclude>src/main/resources/*.txt</exclude>
+				</excludes>
+			</resource>
+		</resources>
+
 		<plugins>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -50,9 +62,58 @@
 					<javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
 				</configuration>
 			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.2.0</version>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/src/main/resources</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/main/resources</directory>
+									<excludes>
+										<exclude>src/main/resources/*.txt</exclude>
+									</excludes>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+			<groupId>com.akathist.maven.plugins.launch4j</groupId>
+			<artifactId>launch4j-maven-plugin</artifactId>
+			<executions>
+				<execution>
+					<id>l4j-gui</id>
+					<phase>package</phase>
+					<goals><goal>launch4j</goal></goals>
+					<configuration>
+						<headerType>gui</headerType>
+						<outfile>jumpy-birb.exe</outfile>
+						<jar>target/jumpy-birb-0.0.1-SNAPSHOT.jar</jar>
+						<icon>${project.build.directory}/../src/main/resources/birbner.ico</icon>
+						<errTitle>jumpy-birb</errTitle>
+						<classPath>
+							<mainClass>se.yrgo.am3.ui.App</mainClass>
+						</classPath>
+						<jre>
+							<path>${env.JAVA_HOME}</path>
+						</jre>
+					</configuration>
+				</execution>
+			</executions>
+			</plugin>
 		</plugins>
 	</build>
-
+<!--
 	<dependencies>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
@@ -67,4 +128,5 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	-->
 </project>

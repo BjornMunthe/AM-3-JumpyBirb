@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ThreadLocalRandom;
 import java.net.URL;
 import javax.imageio.ImageIO;
@@ -101,20 +102,25 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
             g.setColor(Color.green);
             g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
             g.setColor(Color.black);
+
             g.setFont(new Font("Arial", Font.BOLD, d.height / 15));
             g.drawString("Welcome to Jumpybirb!", d.width / 10, 1 * d.height / 5);
             g.drawString("Press SPACE to jump.", d.width / 10, 2 * d.height / 5);
             g.drawString("Choose difficulty to start", d.width / 10, 3 * d.height / 5);
             g.drawString("1: EASY   2:NORMAL    3:HARD", d.width / 10, 4 * d.height / 5);
             timer.start();
+
         }
         else {
             g.drawImage(background, -backgroundCounter / 2, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT, this);
+
             if (fallingCounter < 20 && fallingCounter > 3 && !gameOver) {
                 g.drawImage(birbDown, birb.x, birb.y, birb.width, birb.height, this);
             }
             else if (!gameOver) {
                 g.drawImage(birbUp, birb.x, birb.y, birb.width, birb.height, this);
+            } else if (gameOver != true) {
+                g.drawImage(birbDown, birb.x, birb.y, birb.width, birb.height, this);
             }
             for (Pipe pipe : pipes) {
                 if (pipe.getPos().equals("top")) {
@@ -125,15 +131,24 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
                 }
             }
         if (gameOver) {
-            String[] strings = highscore.printHighscore(20);
-            int y = 100;
-            g.setColor(Color.black);
-            g.setFont(new Font("Arial", Font.BOLD, d.height / 15));
-            // g.drawString("Game over!", d.width / 5, d.height / 2 );
-            // g.drawString("Points" + points, d.width / 5, d.height / 2 + PIPE_WIDTH);
-            for (String strin : strings) {
-                g.drawString(strin, 30, y);
-                y += 40;
+            g.setColor(Color.yellow);
+            g.setFont(new Font("Candara", Font.BOLD, d.height / 12));
+            if (!highscore.fileNotRead()) {
+                String[] highscores = highscore.printHighscore();
+                int y = 50;
+
+                g.drawString("HIGSCORES", d.width/2-120, y);
+
+                for (int i = 0; i < highscore.getPoints().length; i ++) {
+                    y += 50;
+
+                    g.drawString(highscores[i*2], d.width/14, y);
+                    g.drawString(highscores[i*2+1], d.width - d.width/12, y);
+                }
+            } else {
+                g.drawString(String.format("Although you scored %d fabulous points,", points), 10, d.height/8);
+                g.drawString("the highscores could unfortunately not", 10, (d.height/8)*2);
+                g.drawString("be retrieved!", 10, (d.height/8)*3);
             }
             g.drawImage(birbDead, birb.x, birb.y, birb.width, birb.height, this);
             g.setColor(Color.green);
@@ -143,11 +158,12 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
             g.drawString("GAME OVER!", 13*d.width/20, 3 * d.height / 10);
             g.drawString("Choose difficulty to play again", 6*d.width/10, 4 * d.height / 10);
             g.drawString("1: EASY  2:NORMAL  3:HARD", 6*d.width/10, 5 * d.height / 10);
+
         }
             if (!gameOver) {
-                g.setColor(Color.red);
-                g.setFont(new Font("Arial", Font.BOLD, 48));
-                g.drawString(String.valueOf(points), d.height / 2, d.width / 4);
+                g.setColor(Color.yellow);
+                g.setFont(new Font("Candara", Font.BOLD, 90));
+                g.drawString(String.valueOf(points), d.width / 2, d.height / 9);
             }
         }
     }
@@ -204,19 +220,22 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         backgroundCounter++;
         this.repaint();
         if (gameOver) {
-            if (points > highscore.getLowscore()) {
-            //if (points > 100) {
+
+
+
+            if (points > highscore.getLowscore() && !highscore.fileNotRead()) {
+                String defaultEntry = ((highscore.getLatestEntry()!= null) ? highscore.getLatestEntry() : "Put you're name here, champ!");
                 String s = (String)JOptionPane.showInputDialog(
                         this,
                         "Concratulations!\n"
                                 + "You've set a highscore\n"
-                                + points + "points\n"
+                                + points + " points\n"
                         + "Please enter your name below:",
                         "Highscore",
                         JOptionPane.PLAIN_MESSAGE,
                         null,
                         null,
-                        "hampus");
+                        defaultEntry);
                 highscore.newEntry(points, s);
             }
             points = 0;
