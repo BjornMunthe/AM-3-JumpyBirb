@@ -9,17 +9,30 @@ import java.io.IOException;
 public class Pipe {
     private int xLoc, yLoc;
     private int width, height;
-    private final String pos;
+    private final String position;
     private final Image pipeImage;
 
+
+    /**
+     *
+     * constructor that takes all the inital variables as in parameters
+     * desides which picture to use based on pos varable
+     *
+     * @param initialWidth
+     * @param initialHeight
+     * @param x
+     * @param y
+     * @param inpos
+     * @throws IOException
+     */
 
     public Pipe(int initialWidth, int initialHeight,int x, int y, String inpos) throws IOException {
         this.width = initialWidth;
         this.height = initialHeight;
         this.xLoc = x;
         this.yLoc = y;
-        this.pos = inpos;
-        if (this.pos.equals("top")) {
+        this.position = inpos;
+        if (this.position.equals("top")) {
             pipeImage = setImage("src/main/resources/topPipe.png");
         } else {
             pipeImage = setImage("src/main/resources/bottomPipe.png");
@@ -38,10 +51,6 @@ public class Pipe {
 
     public Image getPipeImage() {
         return pipeImage;
-    }
-
-    public String getPos() {
-        return pos;
     }
 
     public int getxLoc() {

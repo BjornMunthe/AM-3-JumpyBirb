@@ -78,11 +78,18 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         return image;
     }
 
+    /**
+     * Method to get a fitting starting position for the pipe
+     * @return Random number fitted to the screen
+     */
     private int calculateBottomY() {
-        //Använda SCREEN_HEIGHT ist för bara 50 kanske
-            return ThreadLocalRandom.current().nextInt(PIPE_GAP+50,SCREEN_HEIGHT - PIPE_GAP);
+            return ThreadLocalRandom.current().nextInt(PIPE_GAP+ SCREEN_HEIGHT / 10,SCREEN_HEIGHT - PIPE_GAP);
     }
 
+    /**
+     *Initiates the pipes at set start positions
+     * @throws IOException
+     */
     public void addPipes() throws IOException{
         pipes = new ArrayList<>();
         pipes.add(firstPipe = new Pipe(PIPE_WIDTH, PIPE_HEIGHT, SCREEN_WIDTH + PIPE_WIDTH, calculateBottomY(), "top"));
@@ -111,7 +118,6 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
             g.drawString("Choose difficulty to start", d.width / 10, 3 * d.height / 5);
             g.drawString("1: EASY   2:NORMAL    3:HARD", d.width / 10, 4 * d.height / 5);
             // Kanske starta timern i konstruktorn ELLER TA BORT HELT?
-            timer.start();
         }
         else {
             g.drawImage(background, -backgroundCounter / 2, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT, this);
@@ -169,19 +175,17 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
                 g.drawString(String.valueOf(points), d.width / 2, d.height / 9);
             }
         }
-    
-
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // movePipes()
+        // moves the pipes and checks if it intersects with the bird.
         for (Pipe pipe : pipes) {
             pipe.setxLoc(pipe.getxLoc() - 2);
             if (pipe.getRectangle().intersects(birb)) {
                 gameOver = true;
             }
         }
-        // Dör när du träffar marken
+        // Game over if you hit the ground
         if (birb.y > SCREEN_HEIGHT - SCREEN_HEIGHT / 6) {
             gameOver = true;
         }
@@ -200,23 +204,8 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
                 birb.translate(0, 5);
             }
         }
-        // movePipes()
-        if (firstPipe.getxLoc() == SCREEN_WIDTH / 2 - PIPE_WIDTH) {
-            thirdPipe.setItAll(SCREEN_WIDTH, calculateBottomY(), PIPE_HEIGHT, PIPE_WIDTH);
-            fourthPipe.setItAll(SCREEN_WIDTH, thirdPipe.getyLoc() - PIPE_GAP - PIPE_HEIGHT, PIPE_HEIGHT, PIPE_WIDTH);
-        }
-        if (firstPipe.getxLoc() == -PIPE_WIDTH) {
-            firstPipe.setxLoc(SCREEN_WIDTH + PIPE_WIDTH);
-            secondPipe.setxLoc(SCREEN_WIDTH + PIPE_WIDTH);
-            firstPipe.setyLoc(calculateBottomY());
-            secondPipe.setyLoc(firstPipe.getyLoc() - PIPE_GAP - PIPE_HEIGHT);
-        }
-        if (thirdPipe.getxLoc() == -PIPE_WIDTH) {
-            thirdPipe.setxLoc(SCREEN_WIDTH + PIPE_WIDTH);
-            fourthPipe.setxLoc(SCREEN_WIDTH + PIPE_WIDTH);
-            thirdPipe.setyLoc(calculateBottomY());
-            fourthPipe.setyLoc(thirdPipe.getyLoc() - PIPE_GAP - PIPE_HEIGHT);
-        }
+        movePipes();
+
         // Poängräknaren
         if (firstPipe.getxLoc() == SCREEN_WIDTH / 2 - PIPE_WIDTH || thirdPipe.getxLoc() == SCREEN_WIDTH / 2 - PIPE_WIDTH) {
             points++;
@@ -298,6 +287,28 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
         // do nothing
+    }
+
+    /**
+     * Method that handle the pipes movement and when they shoud be reset
+     */
+    private void movePipes() {
+        if (firstPipe.getxLoc() == SCREEN_WIDTH / 2 - PIPE_WIDTH) {
+            thirdPipe.setItAll(SCREEN_WIDTH, calculateBottomY(), PIPE_HEIGHT, PIPE_WIDTH);
+            fourthPipe.setItAll(SCREEN_WIDTH, thirdPipe.getyLoc() - PIPE_GAP - PIPE_HEIGHT, PIPE_HEIGHT, PIPE_WIDTH);
+        }
+        if (firstPipe.getxLoc() == -PIPE_WIDTH) {
+            firstPipe.setxLoc(SCREEN_WIDTH + PIPE_WIDTH);
+            secondPipe.setxLoc(SCREEN_WIDTH + PIPE_WIDTH);
+            firstPipe.setyLoc(calculateBottomY());
+            secondPipe.setyLoc(firstPipe.getyLoc() - PIPE_GAP - PIPE_HEIGHT);
+        }
+        if (thirdPipe.getxLoc() == -PIPE_WIDTH) {
+            thirdPipe.setxLoc(SCREEN_WIDTH + PIPE_WIDTH);
+            fourthPipe.setxLoc(SCREEN_WIDTH + PIPE_WIDTH);
+            thirdPipe.setyLoc(calculateBottomY());
+            fourthPipe.setyLoc(thirdPipe.getyLoc() - PIPE_GAP - PIPE_HEIGHT);
+        }
     }
 }
 
