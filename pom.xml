@@ -107,26 +107,13 @@
 						<jre>
 							<path>${env.JAVA_HOME}</path>
 						</jre>
-						<!--
-						<versionInfo>
-							<fileVersion>1.2.3.4</fileVersion>
-							<txtFileVersion>txt file version?</txtFileVersion>
-							<fileDescription>a description</fileDescription>
-							<copyright>my copyright</copyright>
-							<productVersion>4.3.2.1</productVersion>
-							<txtProductVersion>txt product version</txtProductVersion>
-							<productName>E-N-C-C</productName>
-							<internalName>ccne</internalName>
-							<originalFilename>original.exe</originalFilename>
-						</versionInfo>
-						-->
 					</configuration>
 				</execution>
 			</executions>
 			</plugin>
 		</plugins>
 	</build>
-
+<!--
 	<dependencies>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
@@ -141,4 +128,5 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	-->
 </project>
