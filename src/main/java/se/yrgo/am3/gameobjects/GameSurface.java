@@ -36,8 +36,6 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     private Image birbDead;
     private Image background;
     //Flytta ut till pipe
-    private Image topPipe;
-    private Image bottomPipe;
     private int backgroundCounter;
     private int fallingCounter;
     private Highscore highscore;
@@ -53,15 +51,18 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         this.PIPE_WIDTH = SCREEN_WIDTH / 8;
         this.PIPE_HEIGHT = height;
         this.PIPE_GAP = height / 6;
-        addPipes();
+
+        try {
+            addPipes();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         this.birb = new Rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4, 60, 40);
         // Ut i klasserna evt
         this.background = setImage("src/main/resources/background.png");
         this.birbDown = setImage("src/main/resources/birbner.png");
         this.birbUp = setImage("src/main/resources/birbupp.png");
         this.birbDead = setImage("src/main/resources/Dead.png");
-        this.topPipe = setImage("src/main/resources/topPipe.png");
-        this.bottomPipe = setImage("src/main/resources/bottomPipe.png");
         this.highscore = new Highscore();
         this.repaint();
     }
@@ -82,7 +83,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
             return ThreadLocalRandom.current().nextInt(PIPE_GAP+50,SCREEN_HEIGHT - PIPE_GAP);
     }
 
-    public void addPipes() {
+    public void addPipes() throws IOException{
         pipes = new ArrayList<>();
         pipes.add(firstPipe = new Pipe(PIPE_WIDTH, PIPE_HEIGHT, SCREEN_WIDTH + PIPE_WIDTH, calculateBottomY(), "top"));
         pipes.add(secondPipe = new Pipe(PIPE_WIDTH, PIPE_HEIGHT, SCREEN_WIDTH + PIPE_WIDTH, firstPipe.getyLoc() - PIPE_GAP - PIPE_HEIGHT, "bot"));
@@ -124,11 +125,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
 
             // Flytta ut till egen metod typ drawPipes()
             for (Pipe pipe : pipes) {
-                if (pipe.getPos().equals("top")) {
-                    g.drawImage(topPipe, pipe.getxLoc(), pipe.getyLoc(), pipe.getWidth(), pipe.getHeight(), this);
-                }
-                else if (pipe.getPos().equals("bot")) {
-                    g.drawImage(bottomPipe, pipe.getxLoc(), pipe.getyLoc(), pipe.getWidth(), pipe.getHeight(), this);
+                g.drawImage(pipe.getPipeImage(), pipe.getxLoc(), pipe.getyLoc(), pipe.getWidth(), pipe.getHeight(), this);
                 }
             }
 
@@ -172,7 +169,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
                 g.drawString(String.valueOf(points), d.width / 2, d.height / 9);
             }
         }
-    }
+    
 
 
     @Override
@@ -264,7 +261,11 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         }
         if (firstRound || gameOver){
             // Evt överflödigt att ha dessa i konstruktorn också
-            addPipes();
+            try {
+                addPipes();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
             this.birb = new Rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4, 60, 40);
             // Hitta enum för 1,2 och 3
             // Göra metod som tar kc som inparameter
