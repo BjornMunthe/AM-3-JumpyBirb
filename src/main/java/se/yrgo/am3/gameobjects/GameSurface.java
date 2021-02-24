@@ -110,14 +110,6 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         }
         else {
             g.drawImage(background, -backgroundCounter / 2, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT, this);
-            // Birben hoppar/åker mot marken. Flytta till egen metod evt i birb - klassen. Allt detta ska ligga under !gamOver
-            if (fallingCounter < 20 && fallingCounter > 3 && !gameOver) {
-                g.drawImage(birbDown, birb.x, birb.y, birb.width, birb.height, this);
-            }
-            else if (!gameOver) {
-                g.drawImage(birbUp, birb.x, birb.y, birb.width, birb.height, this);
-            }
-
         if (gameOver) {
             // Flytta ut till egen metod i gamSurface
             g.setColor(Color.yellow);
@@ -157,9 +149,15 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
                 g.setFont(new Font("Candara", Font.BOLD, 90));
                 g.drawString(String.valueOf(points), d.width / 2, d.height / 9);
                 drawPipes(g);
+                paintBirb(g);
             }
         }
     }
+
+    /**
+     * Animates the pipes
+     * @param g
+     */
 
     private void drawPipes(Graphics g) {
         for (Pipe pipe : pipes) {
@@ -167,6 +165,10 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         }
     }
 
+    /**
+     * Paints the starting screen with instructions
+     * @param g
+     */
     private void setStartingScreen(Graphics g) {
         g.setColor(Color.green);
         g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -176,6 +178,20 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         g.drawString("Press SPACE to jump.", SCREEN_WIDTH / 10, 2 * SCREEN_HEIGHT / 5);
         g.drawString("Choose difficulty to start", SCREEN_WIDTH / 10, 3 * SCREEN_HEIGHT / 5);
         g.drawString("1: EASY   2:NORMAL    3:HARD", SCREEN_WIDTH / 10, 4 * SCREEN_HEIGHT/ 5);
+    }
+
+    /**
+     * animation for the birb
+     * @param g
+     */
+
+    private void paintBirb(Graphics g) {
+        if (fallingCounter < 20 && fallingCounter > 3 && !gameOver) {
+            g.drawImage(birbDown, birb.x, birb.y, birb.width, birb.height, this);
+        }
+        else if (!gameOver) {
+            g.drawImage(birbUp, birb.x, birb.y, birb.width, birb.height, this);
+        }
     }
 
     @Override
