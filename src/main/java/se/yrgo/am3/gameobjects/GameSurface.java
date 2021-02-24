@@ -10,9 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.ThreadLocalRandom;
-import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
@@ -32,10 +30,12 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     private final int PIPE_WIDTH;
     private final int PIPE_HEIGHT;
     private final int PIPE_GAP;
+    //Flytta ut till birb
     private Image birbDown;
     private Image birbUp;
     private Image birbDead;
     private Image background;
+    //Flytta ut till pipe
     private Image topPipe;
     private Image bottomPipe;
     private int backgroundCounter;
@@ -47,6 +47,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         this.timer = new Timer(12, this);
         this.firstRound = true;
         this.gameOver = false;
+        // Kanske flytta till egen metod "setconstants()"
         this.SCREEN_WIDTH = width;
         this.SCREEN_HEIGHT = height;
         this.PIPE_WIDTH = SCREEN_WIDTH / 8;
@@ -54,6 +55,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         this.PIPE_GAP = height / 6;
         addPipes();
         this.birb = new Rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4, 60, 40);
+        // Ut i klasserna evt
         this.background = setImage("src/main/resources/background.png");
         this.birbDown = setImage("src/main/resources/birbner.png");
         this.birbUp = setImage("src/main/resources/birbupp.png");
@@ -76,11 +78,8 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     }
 
     private int calculateBottomY() {
-        int temp = 0;
-        while (temp <= PIPE_GAP + 50 || temp >= SCREEN_HEIGHT - PIPE_GAP) {
-            temp = ThreadLocalRandom.current().nextInt(SCREEN_HEIGHT - PIPE_GAP);
-        }
-        return temp;
+        //Använda SCREEN_HEIGHT ist för bara 50 kanske
+            return ThreadLocalRandom.current().nextInt(PIPE_GAP+50,SCREEN_HEIGHT - PIPE_GAP);
     }
 
     public void addPipes() {
@@ -97,31 +96,33 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     }
 
     private void repaint(Graphics g) {
+        //Använd SCREEN konstanter istället för denna
         final Dimension d = this.getSize();
         if (firstRound) {
+            //Allt dett i egen metod tex setStartingScreen() Borde vara bakgrundsbilden!
             g.setColor(Color.green);
             g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
             g.setColor(Color.black);
 
             g.setFont(new Font("Arial", Font.BOLD, d.height / 15));
-            g.drawString("Welcome to Jumpybirb!", d.width / 10, 1 * d.height / 5);
+            g.drawString("Welcome to Jumpybirb!", d.width / 10, d.height / 5);
             g.drawString("Press SPACE to jump.", d.width / 10, 2 * d.height / 5);
             g.drawString("Choose difficulty to start", d.width / 10, 3 * d.height / 5);
             g.drawString("1: EASY   2:NORMAL    3:HARD", d.width / 10, 4 * d.height / 5);
+            // Kanske starta timern i konstruktorn ELLER TA BORT HELT?
             timer.start();
-
         }
         else {
             g.drawImage(background, -backgroundCounter / 2, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT, this);
-
+            // Birben hoppar/åker mot marken. Flytta till egen metod evt i birb - klassen. Allt detta ska ligga under !gamOver
             if (fallingCounter < 20 && fallingCounter > 3 && !gameOver) {
                 g.drawImage(birbDown, birb.x, birb.y, birb.width, birb.height, this);
             }
             else if (!gameOver) {
                 g.drawImage(birbUp, birb.x, birb.y, birb.width, birb.height, this);
-            } else if (gameOver != true) {
-                g.drawImage(birbDown, birb.x, birb.y, birb.width, birb.height, this);
             }
+
+            // Flytta ut till egen metod typ drawPipes()
             for (Pipe pipe : pipes) {
                 if (pipe.getPos().equals("top")) {
                     g.drawImage(topPipe, pipe.getxLoc(), pipe.getyLoc(), pipe.getWidth(), pipe.getHeight(), this);
@@ -130,7 +131,9 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
                     g.drawImage(bottomPipe, pipe.getxLoc(), pipe.getyLoc(), pipe.getWidth(), pipe.getHeight(), this);
                 }
             }
+
         if (gameOver) {
+            // Flytta ut till egen metod i gamSurface
             g.setColor(Color.yellow);
             g.setFont(new Font("Candara", Font.BOLD, d.height / 12));
             if (!highscore.fileNotRead()) {
@@ -150,6 +153,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
                 g.drawString("the highscores could unfortunately not", 10, (d.height/8)*2);
                 g.drawString("be retrieved!", 10, (d.height/8)*3);
             }
+            // Flytta ut till egen metod typ show gameOver() och använd SCREEN konstanter
             g.drawImage(birbDead, birb.x, birb.y, birb.width, birb.height, this);
             g.setColor(Color.green);
             g.fillRect(6*d.width/10,  2*d.height/10, 3*d.width/10, 4*d.height/10);
@@ -160,7 +164,9 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
             g.drawString("1: EASY  2:NORMAL  3:HARD", 6*d.width/10, 5 * d.height / 10);
 
         }
+        // Under denna if sats ska ALLT komma som ska hända när spelet kör
             if (!gameOver) {
+                // Evt egen metod för detta
                 g.setColor(Color.yellow);
                 g.setFont(new Font("Candara", Font.BOLD, 90));
                 g.drawString(String.valueOf(points), d.width / 2, d.height / 9);
@@ -171,15 +177,18 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        // movePipes()
         for (Pipe pipe : pipes) {
             pipe.setxLoc(pipe.getxLoc() - 2);
             if (pipe.getRectangle().intersects(birb)) {
                 gameOver = true;
             }
         }
+        // Dör när du träffar marken
         if (birb.y > SCREEN_HEIGHT - SCREEN_HEIGHT / 6) {
             gameOver = true;
         }
+        // birbVelocity med fallingcounter som inparameter
         if (birb.y < (this.getSize().height - birb.height - 10)) {
             if (fallingCounter > 0 && fallingCounter < 5) {
                 birb.translate(0, -(2 * fallingCounter * fallingCounter - 3 * fallingCounter - 2));
@@ -194,6 +203,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
                 birb.translate(0, 5);
             }
         }
+        // movePipes()
         if (firstPipe.getxLoc() == SCREEN_WIDTH / 2 - PIPE_WIDTH) {
             thirdPipe.setItAll(SCREEN_WIDTH, calculateBottomY(), PIPE_HEIGHT, PIPE_WIDTH);
             fourthPipe.setItAll(SCREEN_WIDTH, thirdPipe.getyLoc() - PIPE_GAP - PIPE_HEIGHT, PIPE_HEIGHT, PIPE_WIDTH);
@@ -210,19 +220,21 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
             thirdPipe.setyLoc(calculateBottomY());
             fourthPipe.setyLoc(thirdPipe.getyLoc() - PIPE_GAP - PIPE_HEIGHT);
         }
+        // Poängräknaren
         if (firstPipe.getxLoc() == SCREEN_WIDTH / 2 - PIPE_WIDTH || thirdPipe.getxLoc() == SCREEN_WIDTH / 2 - PIPE_WIDTH) {
             points++;
         }
+        // Sätter bakgrundsbilden dåligt namn på backgroundconter?? backgroundPosition evt
         if (backgroundCounter >= 2 * SCREEN_WIDTH) {
             backgroundCounter = 0;
         }
+        // ska ligga vid birdVelocity
         fallingCounter++;
+        // Ska ligga i repaint där man målar bakgrunden kanske?
         backgroundCounter++;
         this.repaint();
         if (gameOver) {
-
-
-
+            // Bra kommentar eller egen metod highscoreblabla(boolean)
             if (points > highscore.getLowscore() && !highscore.fileNotRead()) {
                 String defaultEntry = ((highscore.getLatestEntry()!= null) ? highscore.getLatestEntry() : "Put you're name here, champ!");
                 String s = (String)JOptionPane.showInputDialog(
@@ -251,15 +263,18 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
             fallingCounter = 0;
         }
         if (firstRound || gameOver){
+            // Evt överflödigt att ha dessa i konstruktorn också
             addPipes();
             this.birb = new Rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4, 60, 40);
+            // Hitta enum för 1,2 och 3
+            // Göra metod som tar kc som inparameter
             if (kc == 49) {
                 gameOver = false;
                 timer.setDelay(16);
                 firstRound = false;
                 timer.start();
             }
-            else if (kc == 50) {
+            else if (kc == 50 || kc == KeyEvent.VK_SPACE) {
                 gameOver = false;
                 timer.setDelay(13);
                 firstRound = false;
