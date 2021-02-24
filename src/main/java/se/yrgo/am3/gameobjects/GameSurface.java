@@ -50,13 +50,6 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         this.PIPE_WIDTH = SCREEN_WIDTH / 8;
         this.PIPE_HEIGHT = height;
         this.PIPE_GAP = height / 6;
-
-        try {
-            addPipes();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        this.birb = new Rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4, 60, 40);
         // Ut i klasserna evt
         this.background = setImage("src/main/resources/background.png");
         this.birbDown = setImage("src/main/resources/birbner.png");
@@ -107,7 +100,9 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
             setStartingScreen(g);
         }
         else {
+
             g.drawImage(background, -backgroundCounter / 2, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT, this);
+
         if (gameOver) {
             // Flytta ut till egen metod i gamSurface
             g.setColor(Color.yellow);
@@ -116,10 +111,13 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
                 String[] highscores = highscore.printHighscore();
                 int y = 50;
 
+
                 g.drawString("HIGSCORES", SCREEN_WIDTH/2-120, y);
 
-                for (int i = 0; i < highscore.getPoints().length; i ++) {
-                    y += 50;
+
+                    for (int i = 0; i < highscore.getPoints().length; i++) {
+                        y += 50;
+
 
                     g.drawString(highscores[i*2], SCREEN_WIDTH/14, y);
                     g.drawString(highscores[i*2+1], SCREEN_WIDTH - SCREEN_WIDTH/12, y);
@@ -139,10 +137,12 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
             g.drawString("Choose difficulty to play again", 6*SCREEN_WIDTH/10, 4 * SCREEN_HEIGHT / 10);
             g.drawString("1: EASY  2:NORMAL  3:HARD", 6*SCREEN_WIDTH/10, 5 * SCREEN_HEIGHT / 10);
 
+
         }
         // Under denna if sats ska ALLT komma som ska hända när spelet kör
             if (!gameOver && !firstRound) {
                 //Paints the points
+
                 g.setColor(Color.yellow);
                 g.setFont(new Font("Candara", Font.BOLD, 90));
                 g.drawString(String.valueOf(points), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 9);
@@ -212,11 +212,9 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
             }
             if (fallingCounter > 12 && fallingCounter < 26) {
                 birb.translate(0, 1);
-            }
-            else if (fallingCounter >= 26 && fallingCounter < 40) {
+            } else if (fallingCounter >= 26 && fallingCounter < 40) {
                 birb.translate(0, 3);
-            }
-            else if (fallingCounter >= 40) {
+            } else if (fallingCounter >= 40) {
                 birb.translate(0, 5);
             }
         }
@@ -238,13 +236,13 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         if (gameOver) {
             // Bra kommentar eller egen metod highscoreblabla(boolean)
             if (points > highscore.getLowscore() && !highscore.fileNotRead()) {
-                String defaultEntry = ((highscore.getLatestEntry()!= null) ? highscore.getLatestEntry() : "Put you're name here, champ!");
-                String s = (String)JOptionPane.showInputDialog(
+                String defaultEntry = ((highscore.getLatestEntry() != null) ? highscore.getLatestEntry() : "Put you're name here, champ!");
+                String s = (String) JOptionPane.showInputDialog(
                         this,
                         "Concratulations!\n"
                                 + "You've set a highscore\n"
                                 + points + " points\n"
-                        + "Please enter your name below:",
+                                + "Please enter your name below:",
                         "Highscore",
                         JOptionPane.PLAIN_MESSAGE,
                         null,
@@ -260,38 +258,48 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         final int minHeight = 10;
-        final int kc = e.getKeyCode();
-        if (kc == KeyEvent.VK_SPACE && birb.y > minHeight && !gameOver) {
+        final int keyCode = e.getKeyCode();
+
+        if (firstRound || gameOver) {
+            startGame(keyCode);
+        }
+
+        if (keyCode == KeyEvent.VK_SPACE && birb.y > minHeight && !gameOver) {
             fallingCounter = 0;
         }
-        if (firstRound || gameOver){
-            // Evt överflödigt att ha dessa i konstruktorn också
-            try {
-                addPipes();
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
-            this.birb = new Rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4, 60, 40);
-            // Hitta enum för 1,2 och 3
-            // Göra metod som tar kc som inparameter
-            if (kc == 49) {
-                gameOver = false;
+    }
+
+    public void startGame(int keyCode) {
+                try {
+                    addPipes();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+        this.birb = new Rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4, 60, 40);
+        if (keyCode == KeyEvent.VK_SPACE
+                || keyCode == KeyEvent.VK_1
+                || keyCode == KeyEvent.VK_2
+                || keyCode == KeyEvent.VK_3) {
+            setDifficulty(keyCode);
+            gameOver = false;
+            firstRound = false;
+            timer.start();
+        }
+    }
+
+    public void setDifficulty(int keyCode) {
+        switch (keyCode) {
+            case KeyEvent.VK_1:
                 timer.setDelay(16);
-                firstRound = false;
-                timer.start();
-            }
-            else if (kc == 50 || kc == KeyEvent.VK_SPACE) {
-                gameOver = false;
+                break;
+            case KeyEvent.VK_2:
                 timer.setDelay(13);
-                firstRound = false;
-                timer.start();
-            }
-            else if (kc == 51) {
-                gameOver = false;
+                break;
+            case KeyEvent.VK_3:
                 timer.setDelay(10);
-                firstRound = false;
-                timer.start();
-            }
+                break;
+            default:
+                break;
         }
     }
 
