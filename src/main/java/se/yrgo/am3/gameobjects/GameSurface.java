@@ -36,7 +36,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     private Image birbDead;
     private Image background;
     private int backgroundCounter;
-    private int fallingCounter;
+    private int framesAfterJumpCounter;
     private Highscore highscore;
     private boolean firstRound;
 
@@ -184,7 +184,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
      */
 
     private void paintBirb(Graphics g) {
-        if (fallingCounter < 20 && fallingCounter > 3 && !gameOver) {
+        if (framesAfterJumpCounter < 20 && framesAfterJumpCounter > 3 && !gameOver) {
             g.drawImage(birbDown, birb.x, birb.y, birb.width, birb.height, this);
         }
         else if (!gameOver) {
@@ -205,19 +205,8 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         if (birb.y > SCREEN_HEIGHT - SCREEN_HEIGHT / 6) {
             gameOver = true;
         }
-        // birbVelocity med fallingcounter som inparameter
-        if (birb.y < (this.getSize().height - birb.height - 10)) {
-            if (fallingCounter > 0 && fallingCounter < 5) {
-                birb.translate(0, -(2 * fallingCounter * fallingCounter - 3 * fallingCounter - 2));
-            }
-            if (fallingCounter > 12 && fallingCounter < 26) {
-                birb.translate(0, 1);
-            } else if (fallingCounter >= 26 && fallingCounter < 40) {
-                birb.translate(0, 3);
-            } else if (fallingCounter >= 40) {
-                birb.translate(0, 5);
-            }
-        }
+
+        setBirbYPosition(framesAfterJumpCounter);
         movePipes();
 
         //Increase points if pipes move past a point.
@@ -229,7 +218,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
             backgroundCounter = 0;
         }
         // ska ligga vid birdVelocity
-        fallingCounter++;
+        framesAfterJumpCounter++;
         // Ska ligga i repaint där man målar bakgrunden kanske?
         backgroundCounter++;
         this.repaint();
@@ -255,6 +244,21 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         }
     }
 
+    public void setBirbYPosition(int framesAfterJumpCounter) {
+        if (birb.y < (this.getSize().height - birb.height - 10)) {
+            if (framesAfterJumpCounter > 0 && framesAfterJumpCounter < 5) {
+                birb.translate(0, -(2 * framesAfterJumpCounter * framesAfterJumpCounter - 3 * framesAfterJumpCounter - 2));
+            }
+            if (framesAfterJumpCounter > 12 && framesAfterJumpCounter < 26) {
+                birb.translate(0, 1);
+            } else if (framesAfterJumpCounter >= 26 && framesAfterJumpCounter < 40) {
+                birb.translate(0, 3);
+            } else if (framesAfterJumpCounter >= 40) {
+                birb.translate(0, 5);
+            }
+        }
+    }
+
     @Override
     public void keyPressed(KeyEvent e) {
         final int minHeight = 10;
@@ -265,7 +269,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         }
 
         if (keyCode == KeyEvent.VK_SPACE && birb.y > minHeight && !gameOver) {
-            fallingCounter = 0;
+            framesAfterJumpCounter = 0;
         }
     }
 
