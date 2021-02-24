@@ -103,8 +103,6 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     }
 
     private void repaint(Graphics g) {
-        //Använd SCREEN konstanter istället för denna
-        final Dimension d = this.getSize();
         if (firstRound) {
             setStartingScreen(g);
         }
@@ -113,33 +111,33 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         if (gameOver) {
             // Flytta ut till egen metod i gamSurface
             g.setColor(Color.yellow);
-            g.setFont(new Font("Candara", Font.BOLD, d.height / 12));
+            g.setFont(new Font("Candara", Font.BOLD, SCREEN_HEIGHT / 12));
             if (!highscore.fileNotRead()) {
                 String[] highscores = highscore.printHighscore();
                 int y = 50;
 
-                g.drawString("HIGSCORES", d.width/2-120, y);
+                g.drawString("HIGSCORES", SCREEN_WIDTH/2-120, y);
 
                 for (int i = 0; i < highscore.getPoints().length; i ++) {
                     y += 50;
 
-                    g.drawString(highscores[i*2], d.width/14, y);
-                    g.drawString(highscores[i*2+1], d.width - d.width/12, y);
+                    g.drawString(highscores[i*2], SCREEN_WIDTH/14, y);
+                    g.drawString(highscores[i*2+1], SCREEN_WIDTH - SCREEN_WIDTH/12, y);
                 }
             } else {
-                g.drawString(String.format("Although you scored %d fabulous points,", points), 10, d.height/8);
-                g.drawString("the highscores could unfortunately not", 10, (d.height/8)*2);
-                g.drawString("be retrieved!", 10, (d.height/8)*3);
+                g.drawString(String.format("Although you scored %d fabulous points,", points), 10, SCREEN_HEIGHT/8);
+                g.drawString("the highscores could unfortunately not", 10, (SCREEN_HEIGHT/8)*2);
+                g.drawString("be retrieved!", 10, (SCREEN_HEIGHT/8)*3);
             }
             // Flytta ut till egen metod typ show gameOver() och använd SCREEN konstanter
             g.drawImage(birbDead, birb.x, birb.y, birb.width, birb.height, this);
             g.setColor(Color.green);
-            g.fillRect(6*d.width/10,  2*d.height/10, 3*d.width/10, 4*d.height/10);
+            g.fillRect(6*SCREEN_WIDTH/10,  2*SCREEN_HEIGHT/10, 3*SCREEN_WIDTH/10, 4*SCREEN_HEIGHT/10);
             g.setColor(Color.black);
-            g.setFont(new Font("Arial", Font.BOLD, d.height / 35));
-            g.drawString("GAME OVER!", 13*d.width/20, 3 * d.height / 10);
-            g.drawString("Choose difficulty to play again", 6*d.width/10, 4 * d.height / 10);
-            g.drawString("1: EASY  2:NORMAL  3:HARD", 6*d.width/10, 5 * d.height / 10);
+            g.setFont(new Font("Arial", Font.BOLD, SCREEN_HEIGHT / 35));
+            g.drawString("GAME OVER!", 13*SCREEN_WIDTH/20, 3 * SCREEN_HEIGHT / 10);
+            g.drawString("Choose difficulty to play again", 6*SCREEN_WIDTH/10, 4 * SCREEN_HEIGHT / 10);
+            g.drawString("1: EASY  2:NORMAL  3:HARD", 6*SCREEN_WIDTH/10, 5 * SCREEN_HEIGHT / 10);
 
         }
         // Under denna if sats ska ALLT komma som ska hända när spelet kör
@@ -147,7 +145,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
                 //Paints the points
                 g.setColor(Color.yellow);
                 g.setFont(new Font("Candara", Font.BOLD, 90));
-                g.drawString(String.valueOf(points), d.width / 2, d.height / 9);
+                g.drawString(String.valueOf(points), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 9);
                 drawPipes(g);
                 paintBirb(g);
             }
