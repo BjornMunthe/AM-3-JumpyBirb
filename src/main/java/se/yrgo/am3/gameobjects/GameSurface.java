@@ -96,7 +96,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     }
 
     private void repaint(Graphics g) {
-        g.drawImage(background, -backgroundCounter / 2, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT, this);
+        manageBackground(g);
         if (firstRound) {
             setStartingScreen(g);
         }
@@ -104,15 +104,20 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
                 setHighScore(g);
                 setGameOverScreen(g);
             }
-        // Under denna if sats ska ALLT komma som ska hända när spelet kör
-            if (!gameOver && !firstRound) {
+        else {
                 drawPipes(g);
                 drawPoints(g);
                 paintBirb(g);
             }
         }
 
-
+    private void manageBackground(Graphics g) {
+        g.drawImage(background, -backgroundCounter / 2, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT, this);
+        backgroundCounter++;
+        if (backgroundCounter >= 2 * SCREEN_WIDTH) {
+            backgroundCounter = 0;
+        }
+    }
     /**
      * Draws the points
      * @param g
@@ -188,10 +193,10 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
      * @param g
      */
     private void paintBirb(Graphics g) {
-        if (framesAfterJumpCounter < 20 && framesAfterJumpCounter > 3 && !gameOver) {
+        if (framesAfterJumpCounter < 20 && framesAfterJumpCounter > 3) {
             g.drawImage(birbDown, birb.x, birb.y, birb.width, birb.height, this);
         }
-        else if (!gameOver) {
+        else {
             g.drawImage(birbUp, birb.x, birb.y, birb.width, birb.height, this);
         }
     }
@@ -218,13 +223,11 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
             points++;
         }
         // Sätter bakgrundsbilden dåligt namn på backgroundconter?? backgroundPosition evt
-        if (backgroundCounter >= 2 * SCREEN_WIDTH) {
-            backgroundCounter = 0;
-        }
+
         // ska ligga vid birdVelocity
         framesAfterJumpCounter++;
         // Ska ligga i repaint där man målar bakgrunden kanske?
-        backgroundCounter++;
+
         this.repaint();
         if (gameOver) {
             // Bra kommentar eller egen metod highscoreblabla(boolean)
