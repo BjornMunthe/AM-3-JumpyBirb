@@ -222,13 +222,12 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         if (firstPipe.getxLoc() == SCREEN_WIDTH / 2 - PIPE_WIDTH || thirdPipe.getxLoc() == SCREEN_WIDTH / 2 - PIPE_WIDTH) {
             points++;
         }
-        // Sätter bakgrundsbilden dåligt namn på backgroundconter?? backgroundPosition evt
 
         // ska ligga vid birdVelocity
         framesAfterJumpCounter++;
-        // Ska ligga i repaint där man målar bakgrunden kanske?
 
         this.repaint();
+
         if (gameOver) {
             // Bra kommentar eller egen metod highscoreblabla(boolean)
             if (points > highscore.getLowscore() && !highscore.fileNotRead()) {

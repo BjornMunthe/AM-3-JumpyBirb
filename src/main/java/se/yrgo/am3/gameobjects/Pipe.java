@@ -11,6 +11,7 @@ public class Pipe {
     private int width, height;
     private final String position;
     private final Image pipeImage;
+    private final Rectangle pipeRec;
 
 
     /**
@@ -32,6 +33,7 @@ public class Pipe {
         this.xLoc = x;
         this.yLoc = y;
         this.position = inpos;
+        pipeRec = new Rectangle(xLoc, yLoc, width, height);
         if (this.position.equals("top")) {
             pipeImage = setImage("src/main/resources/topPipe.png");
         } else {
@@ -87,6 +89,8 @@ public class Pipe {
     }
 
     public Rectangle getRectangle() {
-        return (new Rectangle(xLoc, yLoc, width, height));
+        pipeRec.setBounds(xLoc,yLoc,width,height);
+        return pipeRec;
+
     }
 }
