@@ -96,45 +96,32 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     }
 
     private void repaint(Graphics g) {
+        g.drawImage(background, -backgroundCounter / 2, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT, this);
         if (firstRound) {
             setStartingScreen(g);
         }
-        else {
-            g.drawImage(background, -backgroundCounter / 2, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT, this);
-            if (gameOver) {
-                // Flytta ut till egen metod i gamSurface
-                g.setColor(Color.yellow);
-                g.setFont(new Font("Candara", Font.BOLD, SCREEN_HEIGHT / 12));
-                if (!highscore.fileNotRead()) {
-                    String[] highscores = highscore.printHighscore();
-                    int y = 50;
-                    g.drawString("HIGSCORES", SCREEN_WIDTH/2-120, y);
-                    for (int i = 0; i < highscore.getPoints().length; i++) {
-                        y += 50;
-                        g.drawString(highscores[i*2], SCREEN_WIDTH/14, y);
-                        g.drawString(highscores[i*2+1], SCREEN_WIDTH - SCREEN_WIDTH/12, y);
-                    }
-                }
-
-                else {
-                    g.drawString(String.format("Although you scored %d fabulous points,", points), 10, SCREEN_HEIGHT/8);
-                    g.drawString("the highscores could unfortunately not", 10, (SCREEN_HEIGHT/8)*2);
-                    g.drawString("be retrieved!", 10, (SCREEN_HEIGHT/8)*3);
-                }
+        else if (gameOver) {
+                setHighScore(g);
                 setGameOverScreen(g);
             }
         // Under denna if sats ska ALLT komma som ska hända när spelet kör
             if (!gameOver && !firstRound) {
-                //Paints the points
-                g.setColor(Color.yellow);
-                g.setFont(new Font("Candara", Font.BOLD, 90));
-                g.drawString(String.valueOf(points), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 9);
                 drawPipes(g);
+                drawPoints(g);
                 paintBirb(g);
             }
         }
-    }
 
+
+    /**
+     * Draws the points
+     * @param g
+     */
+    private void drawPoints(Graphics g) {
+        g.setColor(Color.yellow);
+        g.setFont(new Font("Candara", Font.BOLD, 90));
+        g.drawString(String.valueOf(points), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 9);
+    }
     /**
      * Animates the pipes
      * @param g
@@ -150,14 +137,35 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
      * @param g
      */
     private void setStartingScreen(Graphics g) {
-        g.setColor(Color.green);
-        g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+//        g.setColor(Color.green);
+//        g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
         g.setColor(Color.black);
         g.setFont(new Font("Arial", Font.BOLD, SCREEN_HEIGHT / 15));
         g.drawString("Welcome to Jumpybirb!", SCREEN_WIDTH / 10, SCREEN_HEIGHT / 5);
         g.drawString("Press SPACE to jump.", SCREEN_WIDTH / 10, 2 * SCREEN_HEIGHT / 5);
         g.drawString("Choose difficulty to start", SCREEN_WIDTH / 10, 3 * SCREEN_HEIGHT / 5);
         g.drawString("1: EASY   2:NORMAL    3:HARD", SCREEN_WIDTH / 10, 4 * SCREEN_HEIGHT/ 5);
+    }
+
+    private void setHighScore(Graphics g) {
+        g.setColor(Color.yellow);
+        g.setFont(new Font("Candara", Font.BOLD, SCREEN_HEIGHT / 12));
+        if (!highscore.fileNotRead()) {
+            String[] highscores = highscore.printHighscore();
+            int y = 50;
+            g.drawString("HIGSCORES", SCREEN_WIDTH/2-120, y);
+            for (int i = 0; i < highscore.getPoints().length; i++) {
+                y += 50;
+                g.drawString(highscores[i*2], SCREEN_WIDTH/14, y);
+                g.drawString(highscores[i*2+1], SCREEN_WIDTH - SCREEN_WIDTH/12, y);
+            }
+        }
+
+        else {
+            g.drawString(String.format("Although you scored %d fabulous points,", points), 10, SCREEN_HEIGHT/8);
+            g.drawString("the highscores could unfortunately not", 10, (SCREEN_HEIGHT/8)*2);
+            g.drawString("be retrieved!", 10, (SCREEN_HEIGHT/8)*3);
+        }
     }
 
     /**
