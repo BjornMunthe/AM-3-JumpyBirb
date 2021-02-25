@@ -356,7 +356,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
             one.setxLoc(SCREEN_WIDTH + PIPE_WIDTH);
             two.setxLoc(SCREEN_WIDTH + PIPE_WIDTH);
             one.setyLoc(calculateBottomY());
-            two.setyLoc(thirdPipe.getyLoc() - PIPE_GAP - PIPE_HEIGHT);
+            two.setyLoc(one.getyLoc() - PIPE_GAP - PIPE_HEIGHT);
         }
     }
 }
