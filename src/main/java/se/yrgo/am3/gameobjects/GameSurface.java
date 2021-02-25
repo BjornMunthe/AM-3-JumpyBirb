@@ -206,19 +206,14 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         // moves the pipes and checks if it intersects with the bird.
-        for (Pipe pipe : pipes) {
-            pipe.setxLoc(pipe.getxLoc() - 2);
-            if (pipe.getRectangle().intersects(birb)) {
-                gameOver = true;
-            }
-        }
+        handlePipePosition();
         // Game over if you hit the ground
         if (birb.y > SCREEN_HEIGHT - SCREEN_HEIGHT / 6) {
             gameOver = true;
         }
 
         setBirbYPosition(framesAfterJumpCounter);
-        handlePipePosition();
+
 
         //Increase points if pipes move past a point.
         if (firstPipe.getxLoc() == SCREEN_WIDTH / 2 - PIPE_WIDTH || thirdPipe.getxLoc() == SCREEN_WIDTH / 2 - PIPE_WIDTH) {
@@ -338,8 +333,15 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
 
     /**
      * Method that handle the pipes movement and when they shoud be reset
+     * and intersection with birb
      */
     private void handlePipePosition() {
+        for (Pipe pipe : pipes) {
+            pipe.setxLoc(pipe.getxLoc() - 2);
+            if (pipe.getRectangle().intersects(birb)) {
+                gameOver = true;
+            }
+        }
         if (firstPipe.getxLoc() == SCREEN_WIDTH / 2 - PIPE_WIDTH) {
             thirdPipe.setItAll(SCREEN_WIDTH, calculateBottomY(), PIPE_HEIGHT, PIPE_WIDTH);
             fourthPipe.setItAll(SCREEN_WIDTH, thirdPipe.getyLoc() - PIPE_GAP - PIPE_HEIGHT, PIPE_HEIGHT, PIPE_WIDTH);
