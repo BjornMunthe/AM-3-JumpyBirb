@@ -7,7 +7,7 @@ public class Highscore {
     private int[] points;
     private String[] names;
     private File textfile;
-    private boolean failedToReadFile;
+    private boolean fileRead;
     private String latestEntry;
 
     /*
@@ -20,7 +20,6 @@ public class Highscore {
         textfile = new File("src/main/resources/highscore.txt");
         if (textfile.exists()) {
             try (BufferedReader reader = new BufferedReader(new FileReader(textfile))) {
-
                 for (int i = 0; i < points.length; i++) {
                     String line = reader.readLine();
                     if (line != null) {
@@ -39,11 +38,11 @@ public class Highscore {
                         }
                     }
                 }
-                //throw new IOException();
+                fileRead = true;
             } catch (IOException exc) {
                 System.err.println("Failed to read highscore");
                 exc.printStackTrace();
-                failedToReadFile = true;
+                fileRead = false;
             }
         }
     }
@@ -58,20 +57,13 @@ public class Highscore {
         latestEntry = str;
         int placHInt = 0;
         String placHString = null;
-        if (str == null || str.matches(" +") || str.length()<1) {
-            str = "Anonymous";
+        if (str == null || str.matches(" +") || str.length()<1 || str.equals("Enter name")) {
+            str = "Anon";
         }
         str = ((str.length() > 10) ? str.substring(0,10).toUpperCase() : str.toUpperCase());
         for (int i = 0; i < points.length; i++) {
-            if ((i == points.length-1) && (points[i] <= in)) {
-                placHInt = points[i];
-                placHString = names[i];
-                points[i] = in;
-                names[i] = str;
-                in = placHInt;
-                str = placHString;
-            }
-            if (points[i] < in) {
+
+            if (points[i] < in  || ((i == points.length-1) && (points[i] <= in))) {
                 placHInt = points[i];
                 placHString = names[i];
                 points[i] = in;
@@ -108,8 +100,8 @@ public class Highscore {
 
     }
 
-    public boolean fileNotRead() {
-        return failedToReadFile;
+    public boolean fileRead() {
+        return fileRead;
     }
 
     public int[] getPoints() {
@@ -136,7 +128,7 @@ public class Highscore {
         } catch (IOException exc) {
             System.err.println("Failed to write to highscore.txt");
             exc.printStackTrace();
-            failedToReadFile = true;
+            fileRead = false;
         }
     }
 

@@ -133,7 +133,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     /**
      * Animates the pipes
      *
-     * @param g
+     * @param g the graphics to be used
      */
     private void drawPipes(Graphics g) {
         for (Pipe pipe : pipes) {
@@ -144,7 +144,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     /**
      * Paints the starting screen with instructions
      *
-     * @param g
+     * @param g the graphics to be used
      */
     private void setStartingScreen(Graphics g) {
 //        g.setColor(Color.green);
@@ -160,7 +160,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     private void paintHighScore(Graphics g) {
         g.setColor(Color.ORANGE);
         g.setFont(new Font("Candara", Font.BOLD, SCREEN_HEIGHT / 15));
-        if (!highscore.fileNotRead()) {
+        if (highscore.fileRead()) {
             String[] highscores = highscore.printHighscore();
             int yPos = SCREEN_HEIGHT/2;
             int xPos = SCREEN_WIDTH/ 20;
@@ -199,7 +199,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     /**
      * animation for the birb
      *
-     * @param g
+     * @param g the graphics to be used
      */
     private void paintBirb(Graphics g) {
         if (framesAfterJumpCounter < 20 && framesAfterJumpCounter > 3) {
@@ -233,7 +233,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
 
         if (gameOver) {
             // Bra kommentar eller egen metod highscoreblabla(boolean)
-            if (points > highscore.getLowscore() && !highscore.fileNotRead()) {
+            if (points > highscore.getLowscore() && highscore.fileRead()) {
                 highscoreInput();
             }
             points = 0;
