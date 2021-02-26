@@ -122,7 +122,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     /**
      * Draws the points
      *
-     * @param g
+     * @param g the graphics to be used
      */
     private void drawPoints(Graphics g) {
         g.setColor(Color.yellow);
@@ -149,8 +149,8 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     private void setStartingScreen(Graphics g) {
 //        g.setColor(Color.green);
 //        g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-        g.setColor(Color.black);
-        g.setFont(new Font("Arial", Font.BOLD, SCREEN_HEIGHT / 15));
+        g.setColor(Color.ORANGE);
+        g.setFont(new Font("Candara", Font.BOLD, SCREEN_HEIGHT / 15));
         g.drawString("Welcome to Jumpybirb!", SCREEN_WIDTH / 10, SCREEN_HEIGHT / 5);
         g.drawString("Press SPACE to jump.", SCREEN_WIDTH / 10, 2 * SCREEN_HEIGHT / 5);
         g.drawString("Choose difficulty to start", SCREEN_WIDTH / 10, 3 * SCREEN_HEIGHT / 5);
@@ -158,7 +158,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
     }
 
     private void paintHighScore(Graphics g) {
-        g.setColor(Color.yellow);
+        g.setColor(Color.ORANGE);
         g.setFont(new Font("Candara", Font.BOLD, SCREEN_HEIGHT / 15));
         if (!highscore.fileNotRead()) {
             String[] highscores = highscore.printHighscore();
@@ -234,26 +234,14 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         if (gameOver) {
             // Bra kommentar eller egen metod highscoreblabla(boolean)
             if (points > highscore.getLowscore() && !highscore.fileNotRead()) {
-                String s = (String) JOptionPane.showInputDialog(
-                        this,
-                        "Concratulations!\n"
-                                + "You've set a highscore\n"
-                                + points + " points\n"
-                                + "Please enter your name below:",
-                        "Highscore",
-                        JOptionPane.PLAIN_MESSAGE,
-                        null,
-                        null,
-                        highscore.getLatestEntry());
-                highscore.newEntry(points, s);
-                this.repaint();
+                highscoreInput();
             }
             points = 0;
             timer.stop();
         }
     }
 
-    public void setBirbYPosition(int framesAfterJumpCounter) {
+    private void setBirbYPosition(int framesAfterJumpCounter) {
         if (birb.y < (this.getSize().height - birb.height - 10)) {
             if (framesAfterJumpCounter > 0 && framesAfterJumpCounter < 5) {
                 birb.translate(0, -(2 * framesAfterJumpCounter * framesAfterJumpCounter - 3 * framesAfterJumpCounter - 2));
@@ -266,6 +254,26 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
                 birb.translate(0, 5);
             }
         }
+    }
+
+    /**
+     * Method for displaying a popup to retrieve the players name and passing it
+     * and the points made to the highscore class
+     */
+    private void highscoreInput() {
+        String s = (String) JOptionPane.showInputDialog(
+                this,
+                "Concratulations!\n"
+                        + "You've set a highscore\n"
+                        + points + " points\n"
+                        + "Please enter your name below:",
+                "Highscore",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                null,
+                highscore.getLatestEntry());
+        highscore.newEntry(points, s);
+        this.repaint();
     }
 
     @Override
