@@ -126,8 +126,8 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
      */
     private void drawPoints(Graphics g) {
         g.setColor(Color.yellow);
-        g.setFont(new Font("Candara", Font.BOLD, 90));
-        g.drawString(String.valueOf(points), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 9);
+        g.setFont(new Font("Candara", Font.BOLD, SCREEN_HEIGHT / 15));
+        g.drawString(String.valueOf("Points: " + points), SCREEN_WIDTH / 10, SCREEN_HEIGHT / 9);
     }
 
     /**
@@ -157,43 +157,18 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         g.drawString("1: EASY   2:NORMAL    3:HARD", SCREEN_WIDTH / 10, 4 * SCREEN_HEIGHT / 5);
     }
 
-    private void paintHighScore(Graphics g) {
-        g.setColor(Color.ORANGE);
-        g.setFont(new Font("Candara", Font.BOLD, SCREEN_HEIGHT / 15));
-        if (highscore.fileRead()) {
-            String[] highscores = highscore.printHighscore();
-            int yPos = SCREEN_HEIGHT/2;
-            int xPos = SCREEN_WIDTH/ 20;
-            int xOffset = 0;
-            g.drawString("HIGHSCORES", SCREEN_WIDTH / 2 - 120, yPos);
-            for (int i = 0; i < highscore.getPoints().length; i++) {
-                 if (i == highscore.getPoints().length/2) {
-                     xOffset+=SCREEN_WIDTH/2;
-                     yPos=SCREEN_HEIGHT/2;
-                 }
-                yPos += 40;
-                g.drawString(highscores[i * 2], xPos + xOffset, yPos);
-                g.drawString(highscores[i * 2 + 1], xPos *9 + xOffset, yPos);
-            }
-        } else {
-            g.drawString(String.format("Although you scored %d fabulous points,", points), 10, SCREEN_HEIGHT / 8);
-            g.drawString("the highscores could unfortunately not", 10, (SCREEN_HEIGHT / 8) * 2);
-            g.drawString("be retrieved!", 10, (SCREEN_HEIGHT / 8) * 3);
-        }
-    }
-
     /**
      * Sets the style and text for the game over notification
      */
     private void setGameOverScreen(Graphics g) {
-        g.drawImage(birbDead, birb.x, birb.y, birb.width, birb.height, this);
-        g.setColor(Color.green);
-        g.fillRect(6 * SCREEN_WIDTH / 10, 2 * SCREEN_HEIGHT / 10, 3 * SCREEN_WIDTH / 10, 4 * SCREEN_HEIGHT / 10);
-        g.setColor(Color.black);
-        g.setFont(new Font("Arial", Font.BOLD, SCREEN_HEIGHT / 35));
-        g.drawString("GAME OVER!", 13 * SCREEN_WIDTH / 20, 3 * SCREEN_HEIGHT / 10);
-        g.drawString("Choose difficulty to play again", 6 * SCREEN_WIDTH / 10, 4 * SCREEN_HEIGHT / 10);
-        g.drawString("1: EASY  2:NORMAL  3:HARD", 6 * SCREEN_WIDTH / 10, 5 * SCREEN_HEIGHT / 10);
+        g.setColor(Color.RED);
+        g.setFont(new Font("Candara", Font.BOLD, SCREEN_HEIGHT / 15));
+        g.drawString("GAME OVER!",  5*SCREEN_WIDTH/ 15,  SCREEN_HEIGHT / 10);
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Candara", Font.BOLD, SCREEN_HEIGHT / 25));
+        g.drawString("Press SPACE to play again", 5*SCREEN_WIDTH/ 15 , 2 * SCREEN_HEIGHT / 10);
+        g.drawString("To change difficulty press:",  5*SCREEN_WIDTH/ 15, 3 * SCREEN_HEIGHT / 10);
+        g.drawString("1: EASY  2:NORMAL  3:HARD",  5*SCREEN_WIDTH/ 15 , 4 * SCREEN_HEIGHT / 10);
     }
 
     /**
@@ -209,36 +184,62 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         }
     }
 
+    private void paintHighScore(Graphics g) {
+        g.drawImage(birbDead, birb.x, birb.y, birb.width, birb.height, this);
+        g.setColor(Color.ORANGE);
+        g.setFont(new Font("Candara", Font.BOLD, SCREEN_HEIGHT / 15));
+        if (highscore.fileRead()) {
+            String[] highscores = highscore.printHighscore();
+            int yPos = 11 * SCREEN_HEIGHT/20;
+            int xPos = SCREEN_WIDTH/ 20;
+            int xOffset = 0;
+            g.drawString("HIGHSCORES", SCREEN_WIDTH / 2 - 120, yPos);
+            g.setFont(new Font("Candara", Font.BOLD, SCREEN_HEIGHT / 20));
+            g.setColor(Color.ORANGE);
+            for (int i = 0; i < highscore.getPoints().length; i++) {
+                 if (i == highscore.getPoints().length/2) {
+                     xOffset+=SCREEN_WIDTH/2;
+                     yPos=11*SCREEN_HEIGHT/20;
+                 }
+                yPos += 40;
+                g.drawString(highscores[i * 2], xPos + xOffset, yPos);
+                g.drawString(highscores[i * 2 + 1], xPos *9 + xOffset, yPos);
+            }
+        } else {
+            g.drawString(String.format("Although you scored %d fabulous points,", points), 10, SCREEN_HEIGHT / 8);
+            g.drawString("the highscores could unfortunately not", 10, (SCREEN_HEIGHT / 8) * 2);
+            g.drawString("be retrieved!", 10, (SCREEN_HEIGHT / 8) * 3);
+        }
+
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         // moves the pipes and checks if it intersects with the bird.
         handlePipePosition();
-        // Game over if you hit the ground
-        if (birb.y > SCREEN_HEIGHT - SCREEN_HEIGHT / 6) {
-            gameOver = true;
-        }
 
         setBirbYPosition(framesAfterJumpCounter);
-
+        framesAfterJumpCounter++;
+        this.repaint();
 
         //Increase points if pipes move past a point.
         if (firstPipe.getxLoc() == SCREEN_WIDTH / 2 - PIPE_WIDTH || thirdPipe.getxLoc() == SCREEN_WIDTH / 2 - PIPE_WIDTH) {
             points++;
         }
 
-        // ska ligga vid birdVelocity
-        framesAfterJumpCounter++;
-
-        this.repaint();
+        // Game over if you hit the ground
+        if (birb.y > SCREEN_HEIGHT - SCREEN_HEIGHT / 6) {
+            gameOver = true;
+        }
 
         if (gameOver) {
-            // Bra kommentar eller egen metod highscoreblabla(boolean)
             if (points > highscore.getLowscore() && highscore.fileRead()) {
                 highscoreInput();
             }
             points = 0;
             timer.stop();
         }
+
     }
 
     private void setBirbYPosition(int framesAfterJumpCounter) {
