@@ -14,6 +14,7 @@ public class Highscore {
     constructor that reads highscoredata from the appropriate file, if it exists, into the points and names arrays.
      */
     public Highscore() {
+        latestEntry = "Enter name";
         points = new int[10];
         names = new String[10];
         textfile = new File("src/main/resources/highscore.txt");
@@ -60,7 +61,7 @@ public class Highscore {
         if (str == null || str.matches(" +") || str.length()<1) {
             str = "Anonymous";
         }
-        str = ((str.length() > 15) ? str.substring(0,15).toUpperCase() : str.toUpperCase());
+        str = ((str.length() > 10) ? str.substring(0,10).toUpperCase() : str.toUpperCase());
         for (int i = 0; i < points.length; i++) {
             if ((i == points.length-1) && (points[i] <= in)) {
                 placHInt = points[i];

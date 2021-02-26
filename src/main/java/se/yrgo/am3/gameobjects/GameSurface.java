@@ -102,7 +102,7 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         if (firstRound) {
             setStartingScreen(g);
         } else if (gameOver) {
-            setHighScore(g);
+            paintHighScore(g);
             setGameOverScreen(g);
         } else {
             drawPipes(g);
@@ -157,17 +157,23 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         g.drawString("1: EASY   2:NORMAL    3:HARD", SCREEN_WIDTH / 10, 4 * SCREEN_HEIGHT / 5);
     }
 
-    private void setHighScore(Graphics g) {
+    private void paintHighScore(Graphics g) {
         g.setColor(Color.yellow);
-        g.setFont(new Font("Candara", Font.BOLD, SCREEN_HEIGHT / 12));
+        g.setFont(new Font("Candara", Font.BOLD, SCREEN_HEIGHT / 15));
         if (!highscore.fileNotRead()) {
             String[] highscores = highscore.printHighscore();
-            int y = 50;
-            g.drawString("HIGSCORES", SCREEN_WIDTH / 2 - 120, y);
+            int yPos = SCREEN_HEIGHT/2;
+            int xPos = SCREEN_WIDTH/ 20;
+            int xOffset = 0;
+            g.drawString("HIGHSCORES", SCREEN_WIDTH / 2 - 120, yPos);
             for (int i = 0; i < highscore.getPoints().length; i++) {
-                y += 50;
-                g.drawString(highscores[i * 2], SCREEN_WIDTH / 14, y);
-                g.drawString(highscores[i * 2 + 1], SCREEN_WIDTH - SCREEN_WIDTH / 12, y);
+                 if (i == highscore.getPoints().length/2) {
+                     xOffset+=SCREEN_WIDTH/2;
+                     yPos=SCREEN_HEIGHT/2;
+                 }
+                yPos += 40;
+                g.drawString(highscores[i * 2], xPos + xOffset, yPos);
+                g.drawString(highscores[i * 2 + 1], xPos *9 + xOffset, yPos);
             }
         } else {
             g.drawString(String.format("Although you scored %d fabulous points,", points), 10, SCREEN_HEIGHT / 8);
@@ -228,7 +234,6 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
         if (gameOver) {
             // Bra kommentar eller egen metod highscoreblabla(boolean)
             if (points > highscore.getLowscore() && !highscore.fileNotRead()) {
-                String defaultEntry = ((highscore.getLatestEntry() != null) ? highscore.getLatestEntry() : "Put you're name here, champ!");
                 String s = (String) JOptionPane.showInputDialog(
                         this,
                         "Concratulations!\n"
@@ -239,8 +244,9 @@ public class GameSurface extends JPanel implements ActionListener, KeyListener {
                         JOptionPane.PLAIN_MESSAGE,
                         null,
                         null,
-                        defaultEntry);
+                        highscore.getLatestEntry());
                 highscore.newEntry(points, s);
+                this.repaint();
             }
             points = 0;
             timer.stop();
